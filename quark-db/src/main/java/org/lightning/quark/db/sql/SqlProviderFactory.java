@@ -16,9 +16,9 @@ public abstract class SqlProviderFactory {
      */
     public static SqlExecuteProvider createProvider(DbVendorEnum type, MetaTable tableDef) {
 //        if (type == DbVendorEnum.MSSQL) {
-//            return new SQLServerSqlProvider(tableDef);
+//            return new SQLServerSqlProvider(table);
 //        } else if (type == DbVendorEnum.MYSQL) {
-//            return new MySQLSqlProvider(tableDef);
+//            return new MySQLSqlProvider(table);
 //        }
         throw new RuntimeException("unknown type#" + type);
     }

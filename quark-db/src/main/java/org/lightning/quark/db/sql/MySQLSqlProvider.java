@@ -133,7 +133,7 @@ public class MySQLSqlProvider extends BaseSqlProvider {
         String sql =  "insert into {tableName} ( {columns} ) values ( {placeholder} )";
         return sql.replace("{columns}", getColumnNames())
                 .replace("{tableName}", wrappedTableName())
-                .replace("{placeholder}", preparePlaceholder(tableDef.getColumns().size()))
+                .replace("{placeholder}", preparePlaceholder(table.getColumns().size()))
                 ;
     }
 
@@ -155,7 +155,7 @@ public class MySQLSqlProvider extends BaseSqlProvider {
     public String prepareUpdateRow4OneRow(Map<String, Object> oneRow, PKData pk) {
         String sql = "UPDATE {tableName} {setCond} {pkCond} ";
 
-        String setCond = " SET " + tableDef.getColumns().stream()
+        String setCond = " SET " + table.getColumns().stream()
                 .map(column -> "" + column.getName() + "=?")
                 .collect(Collectors.joining(", "));
 

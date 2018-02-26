@@ -7,7 +7,6 @@ import org.lightning.quark.core.model.metadata.MetaColumn;
 import org.lightning.quark.core.model.metadata.MetaTable;
 
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -23,10 +22,10 @@ public abstract class BaseSqlProvider implements SqlExecuteProvider {
     protected static final String DESC = " DESC ";
     protected static final String ORDER_BY = " ORDER BY ";
 
-    protected MetaTable tableDef;
+    protected MetaTable table;
 
     public BaseSqlProvider(MetaTable tableDef) {
-        this.tableDef = tableDef;
+        this.table = tableDef;
     }
 
     protected String getColumnsText(List<MetaColumn> columns) {
@@ -40,7 +39,7 @@ public abstract class BaseSqlProvider implements SqlExecuteProvider {
     }
 
     protected String getColumnNames() {
-        return getColumnsText(tableDef.getColumns());
+        return getColumnsText(table.getColumns());
     }
 
     protected String getPkNames() {
@@ -59,11 +58,11 @@ public abstract class BaseSqlProvider implements SqlExecuteProvider {
     }
 
     protected List<MetaColumn> getAllColumns() {
-        return tableDef.getColumns();
+        return table.getColumns();
     }
 
     protected List<MetaColumn> getPkColumns() {
-        return tableDef.getPrimaryKey().getColumns();
+        return table.getPrimaryKey().getColumns();
     }
 
     protected String preparePkCond(PKData pk, String operator, String connector) {
@@ -97,7 +96,7 @@ public abstract class BaseSqlProvider implements SqlExecuteProvider {
     }
 
     protected String wrappedTableName() {
-        return wrapName(tableDef.getName());
+        return wrapName(table.getName());
     }
 
     protected String wrapName(String name) {
