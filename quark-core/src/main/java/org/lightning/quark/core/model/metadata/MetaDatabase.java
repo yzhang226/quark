@@ -2,8 +2,7 @@ package org.lightning.quark.core.model.metadata;
 
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.List;
+import org.lightning.quark.core.model.db.DbVendor;
 
 /**
  * Created by cook on 2018/2/25
@@ -13,8 +12,14 @@ import java.util.List;
 public class MetaDatabase {
 
     /**
-     * all tables(s) for this database
+     * vendor type of db
      */
-    private List<MetaTable> tables;
+    private DbVendor vendor;
+
+    private String productName;
+
+    private String productVersion;
+
+    private String userName;
 
 }

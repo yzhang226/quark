@@ -36,6 +36,15 @@ public class MySQLSqlProvider extends BaseSqlProvider {
     }
 
     @Override
+    public String prepareQueryRowByRangeClosed(PKData startPk, PKData endPk) {
+        String sql = "SELECT {columns} FROM {tableName} {pkCond}";
+        return sql.replace("{columns}", getColumnNames())
+                .replace("{tableName}", wrappedTableName())
+                .replace("{pkCond}", preparePkCond(startPk, endPk, ">=", "<="))
+                ;
+    }
+
+    @Override
     public String prepareQueryRowByPage(int pageNo, int pageSize, PKData maxPk) {
         long offset = (pageNo - 1 ) * ((long) pageSize);
         return prepareQueryRowByOffset(offset, pageSize, maxPk);
@@ -64,7 +73,7 @@ public class MySQLSqlProvider extends BaseSqlProvider {
                 .replace("{tableName}", wrappedTableName())
                 .replace("{pkCond}", prepareStartPkCond(minPk))
                 .replace("{pkName}", getPkNames())
-                .replace("{pageSize}", ""+pageSize)
+                .replace("{pageSize}", "?")
                 ;
     }
 

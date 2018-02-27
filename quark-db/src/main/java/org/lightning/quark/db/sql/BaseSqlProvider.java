@@ -13,7 +13,7 @@ import java.util.stream.IntStream;
 /**
  * Created by cook on 2017/12/12
  */
-public abstract class BaseSqlProvider implements SqlExecuteProvider {
+public abstract class BaseSqlProvider implements SqlProvider {
 
     protected static final String WHERE = " WHERE ";
     protected static final String AND = " AND ";
@@ -24,8 +24,8 @@ public abstract class BaseSqlProvider implements SqlExecuteProvider {
 
     protected MetaTable table;
 
-    public BaseSqlProvider(MetaTable tableDef) {
-        this.table = tableDef;
+    public BaseSqlProvider(MetaTable table) {
+        this.table = table;
     }
 
     protected String getColumnsText(List<MetaColumn> columns) {
@@ -83,15 +83,17 @@ public abstract class BaseSqlProvider implements SqlExecuteProvider {
     }
 
     protected String preparePkCond(PKData startPk, PKData endPk) {
+        return preparePkCond(startPk, endPk, ">=", "<");
+    }
+
+    protected String preparePkCond(PKData startPk, PKData endPk, String startOperator, String endOperator) {
         String cond = "";
         if (startPk != null && CollectionUtils.isNotEmpty(startPk.getPkValues())) {
-            cond = preparePkCond(startPk, ">=", WHERE);
+            cond = preparePkCond(startPk, startOperator, WHERE);
         }
-
         if (endPk != null && CollectionUtils.isNotEmpty(endPk.getPkValues())) {
-            cond += preparePkCond(endPk, "<", StringUtils.isEmpty(cond) ? WHERE : AND);
+            cond += preparePkCond(endPk, endOperator, StringUtils.isEmpty(cond) ? WHERE : AND);
         }
-
         return cond;
     }
 

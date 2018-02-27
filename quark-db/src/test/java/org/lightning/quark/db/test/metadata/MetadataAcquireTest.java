@@ -31,7 +31,7 @@ public class MetadataAcquireTest {
         Connection connection = dataSource.getConnection();
         String testTableName = "misc_table";
 
-        printTableColumnInfo2(connection, testTableName);
+        printTableColumnInfo(connection, testTableName);
 
         connection.close();
     }
@@ -46,7 +46,7 @@ public class MetadataAcquireTest {
 
         String testTableName = "%";
 
-        printTableColumnInfo2(conn, testTableName);
+        printTableColumnInfo(conn, testTableName);
 
         conn.close();
     }
