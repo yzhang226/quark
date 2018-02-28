@@ -10,9 +10,9 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum DifferenceType {
 
-    ONLY_IN_SOURCE(1, "源存在, 目标不存在"),
+    ONLY_IN_LEFT(1, "源存在, 目标不存在"),
     NOT_EQUALS(2, "都存在, 有差异"),
-    ONLY_IN_TARGET(3, "源不存在, 目标存在"),
+    ONLY_IN_RIGHT(3, "源不存在, 目标存在"),
     NONE(4, "完成一致, 无差异");
 
     private int code;

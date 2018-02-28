@@ -164,14 +164,16 @@ public class MySQLSqlProvider extends BaseSqlProvider {
     public String prepareUpdateRow4OneRow(Map<String, Object> oneRow, PKData pk) {
         String sql = "UPDATE {tableName} {setCond} {pkCond} ";
 
-        String setCond = " SET " + table.getColumns().stream()
-                .map(column -> "" + column.getName() + "=?")
+        String setCond = " SET " + oneRow.keySet().stream()
+                .map(column -> "" + column + "=?")
                 .collect(Collectors.joining(", "));
+
+        String pkCod = WHERE + preparePkCond(pk, "=", "");
 
         return sql
                 .replace("{tableName}", wrappedTableName())
                 .replace("{setCond}", setCond)
-                .replace("{pkCond}", preparePkCond(pk, "=", ""))
+                .replace("{pkCond}", pkCod)
                 ;
     }
 

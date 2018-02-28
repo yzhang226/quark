@@ -56,7 +56,7 @@ public class PKData {
         if (pkValues.size() != ((PKData) o).getPkValues().size()) return false;
 
         for (int i=0; i<pkValues.size(); i++) {
-            if (!Objects.equals(pkValues.get(i), other.getPkValues().get(i))) {
+            if (!Objects.equals(pkValues.get(i).getValue(), other.getPkValues().get(i).getValue())) {
                 return false;
             }
         }
@@ -68,4 +68,15 @@ public class PKData {
         return Objects.hash(pkValues.toArray());
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("PK[(")
+                .append(pkValues.stream()
+                        .map(pair -> pair.getKey()+"="+pair.getValue())
+                        .collect(Collectors.joining(","))
+                )
+                .append(")]");
+        return sb.toString();
+    }
 }
