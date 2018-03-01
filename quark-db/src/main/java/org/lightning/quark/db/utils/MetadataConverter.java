@@ -3,11 +3,14 @@ package org.lightning.quark.db.utils;
 import org.lightning.quark.core.model.metadata.MetaColumn;
 import org.lightning.quark.core.model.metadata.MetaPrimaryKey;
 import org.lightning.quark.core.model.metadata.MetaTable;
+import org.lightning.quark.db.crawler.CrawlerUtils;
+import schemacrawler.schema.Catalog;
 import schemacrawler.schema.Column;
 import schemacrawler.schema.PrimaryKey;
 import schemacrawler.schema.Table;
 
 import java.sql.JDBCType;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,9 +19,9 @@ import java.util.stream.Collectors;
  */
 public abstract class MetadataConverter {
 
-    public static List<MetaTable> convert(List<Table> tables) {
+    public static List<MetaTable> convert(Collection<Table> tables) {
         return tables.stream()
-                .map(MetadataConverter::convert)
+                .map(table -> convert(table))
                 .collect(Collectors.toList());
     }
 

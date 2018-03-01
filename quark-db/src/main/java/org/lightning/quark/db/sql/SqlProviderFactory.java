@@ -1,6 +1,6 @@
 package org.lightning.quark.db.sql;
 
-import org.lightning.quark.core.model.db.DbVendorEnum;
+import org.lightning.quark.core.model.db.DbVendor;
 import org.lightning.quark.core.model.metadata.MetaTable;
 
 /**
@@ -11,15 +11,16 @@ public abstract class SqlProviderFactory {
     /**
      *
      * @param type
-     * @param tableDef
+     * @param table
      * @return
      */
-    public static SqlExecuteProvider createProvider(DbVendorEnum type, MetaTable tableDef) {
+    public static SqlProvider createProvider(DbVendor type, MetaTable table) {
 //        if (type == DbVendorEnum.MSSQL) {
-//            return new SQLServerSqlProvider(tableDef);
-//        } else if (type == DbVendorEnum.MYSQL) {
-//            return new MySQLSqlProvider(tableDef);
-//        }
+//            return new SQLServerSqlProvider(table);
+//        } else
+        if (type == DbVendor.MYSQL) {
+            return new MySQLSqlProvider(table);
+        }
         throw new RuntimeException("unknown type#" + type);
     }
 

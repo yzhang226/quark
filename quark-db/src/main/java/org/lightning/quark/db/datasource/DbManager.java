@@ -28,6 +28,12 @@ public class DbManager {
         runner = new QueryRunner(dataSource);
     }
 
+    /**
+     *
+     * @param sql
+     * @param params
+     * @return
+     */
     public List<Map<String, Object>> queryAsMap(String sql, Object... params) {
         MapListHandler h = new MapListHandler();
         List<Map<String, Object>> res = null;
@@ -39,6 +45,12 @@ public class DbManager {
         }
     }
 
+    /**
+     *
+     * @param sql
+     * @param params
+     * @return
+     */
     public Map<String, Object> insertOne(String sql, List<Object> params) {
         MapHandler mapHandler = new MapHandler();
         Map<String, Object> res = null;
@@ -54,6 +66,12 @@ public class DbManager {
         }
     }
 
+    /**
+     *
+     * @param sql
+     * @param paramsList
+     * @return
+     */
     public List<Map<String, Object>> insertBatch(String sql, List<List<Object>> paramsList) {
         if (CollectionUtils.isEmpty(paramsList)) {
             logger.error("paramsList is empty");
@@ -71,6 +89,42 @@ public class DbManager {
             return res;
         } catch (SQLException e) {
             throw new QuarkExecuteException("insertBatch error", e);
+        }
+    }
+
+    /**
+     *
+     * @param sql
+     * @param params
+     * @return
+     */
+    public int update(String sql, List<Object> params) {
+        Object[] arr = new Object[]{};
+        if (CollectionUtils.isNotEmpty(params)) {
+            arr = params.toArray();
+        }
+        try {
+            return runner.update(sql, arr);
+        } catch (SQLException e) {
+            throw new QuarkExecuteException("update error", e);
+        }
+    }
+
+    /**
+     *
+     * @param sql
+     * @param params
+     * @return
+     */
+    public int delete(String sql, List<Object> params) {
+        try {
+            if (CollectionUtils.isNotEmpty(params)) {
+                return runner.execute(sql, params.toArray());
+            } else {
+                return runner.execute(sql);
+            }
+        } catch (SQLException e) {
+            throw new QuarkExecuteException("update error", e);
         }
     }
 
