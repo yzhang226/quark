@@ -38,11 +38,8 @@ public class MetadataAcquireTest {
 
     @Test
     public void tableH2MetadataTest() throws SQLException, SchemaCrawlerException {
-        JdbcDataSource ds = new JdbcDataSource();
-        ds.setURL("jdbc:h2:mem:sample;DATABASE_TO_UPPER=false;INIT=RUNSCRIPT FROM 'classpath:/scripts/h2/create.sql'");
-        ds.setUser("sa");
-        ds.setPassword("sa");
-        Connection conn = ds.getConnection();
+        DataSource dataSource = DbTestUtils.createDemoH2DataSource();
+        Connection conn = dataSource.getConnection();
 
         String testTableName = "%";
 

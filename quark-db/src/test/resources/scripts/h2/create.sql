@@ -15,3 +15,5 @@ CREATE TABLE misc_table (
   def_date datetime ,
   PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+

@@ -1,12 +1,12 @@
 package org.lightning.quark.db.copy;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.apache.commons.collections4.CollectionUtils;
 import org.lightning.quark.core.diff.RowDifference;
 import org.lightning.quark.core.model.db.PKData;
 import org.lightning.quark.core.model.db.RowDataInfo;
 import org.lightning.quark.core.model.metadata.MetaTable;
+import org.lightning.quark.core.row.TableColumnMapping;
 import org.lightning.quark.db.datasource.DbManager;
 import org.lightning.quark.db.sql.SqlProvider;
 import org.lightning.quark.db.sql.SqlProviderFactory;
@@ -28,11 +28,14 @@ public class DataRowManager {
 
     private DbManager dbManager;
 
-    public DataRowManager(MetaTable table, DataSource dataSource) {
+    private TableColumnMapping columnMapping;
+
+    public DataRowManager(MetaTable table, DataSource dataSource, TableColumnMapping columnMapping) {
         this.table = table;
         this.dataSource = dataSource;
         this.dbManager = new DbManager(dataSource);
         this.sqlProvider = SqlProviderFactory.createProvider(table.getCatalog().getDatabase().getVendor(), table);
+        this.columnMapping = columnMapping;
     }
 
     /**
@@ -71,7 +74,7 @@ public class DataRowManager {
         List<List<Object>> paramsList = rows.stream()
                                         .map(RowDifference::getLeft)
                                         .map(row -> table.getColumns().stream()
-                                                .map(col -> row.getRow().get(col.getName()))
+                                                .map(col -> row.getRow().get(columnMapping.getLeftColumnName(col.getName())))
                                                 .collect(Collectors.toList()))
                                         .collect(Collectors.toList());
 
