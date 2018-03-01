@@ -1,5 +1,6 @@
 package org.lightning.quark.db.test;
 
+import org.h2.jdbcx.JdbcDataSource;
 import org.lightning.quark.core.model.db.DataSourceParam;
 import org.lightning.quark.db.datasource.DSFactory;
 
@@ -28,6 +29,15 @@ public abstract class DbTestUtils {
         param.setPassword("A791#B578D6B64E31");
 
         return DSFactory.createDataSource(param);
+    }
+
+    public static DataSource createDemoH2DataSource() {
+        JdbcDataSource ds = new JdbcDataSource();
+        ds.setURL("jdbc:h2:mem:sample;DATABASE_TO_UPPER=false;INIT=RUNSCRIPT FROM 'classpath:/scripts/h2/create.sql'");
+        ds.setUser("sa");
+        ds.setPassword("sa");
+
+        return ds;
     }
 
     /*

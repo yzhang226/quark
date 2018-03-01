@@ -7,14 +7,13 @@ import org.lightning.quark.core.model.metadata.MetaColumn;
 import org.lightning.quark.core.model.metadata.MetaTable;
 
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
  * Created by cook on 2017/12/12
  */
-public abstract class BaseSqlProvider implements SqlExecuteProvider {
+public abstract class BaseSqlProvider implements SqlProvider {
 
     protected static final String WHERE = " WHERE ";
     protected static final String AND = " AND ";
@@ -23,10 +22,10 @@ public abstract class BaseSqlProvider implements SqlExecuteProvider {
     protected static final String DESC = " DESC ";
     protected static final String ORDER_BY = " ORDER BY ";
 
-    protected MetaTable tableDef;
+    protected MetaTable table;
 
-    public BaseSqlProvider(MetaTable tableDef) {
-        this.tableDef = tableDef;
+    public BaseSqlProvider(MetaTable table) {
+        this.table = table;
     }
 
     protected String getColumnsText(List<MetaColumn> columns) {
@@ -40,7 +39,7 @@ public abstract class BaseSqlProvider implements SqlExecuteProvider {
     }
 
     protected String getColumnNames() {
-        return getColumnsText(tableDef.getColumns());
+        return getColumnsText(table.getColumns());
     }
 
     protected String getPkNames() {
@@ -59,11 +58,11 @@ public abstract class BaseSqlProvider implements SqlExecuteProvider {
     }
 
     protected List<MetaColumn> getAllColumns() {
-        return tableDef.getColumns();
+        return table.getColumns();
     }
 
     protected List<MetaColumn> getPkColumns() {
-        return tableDef.getPrimaryKey().getColumns();
+        return table.getPrimaryKey().getColumns();
     }
 
     protected String preparePkCond(PKData pk, String operator, String connector) {
@@ -84,20 +83,22 @@ public abstract class BaseSqlProvider implements SqlExecuteProvider {
     }
 
     protected String preparePkCond(PKData startPk, PKData endPk) {
+        return preparePkCond(startPk, endPk, ">=", "<");
+    }
+
+    protected String preparePkCond(PKData startPk, PKData endPk, String startOperator, String endOperator) {
         String cond = "";
         if (startPk != null && CollectionUtils.isNotEmpty(startPk.getPkValues())) {
-            cond = preparePkCond(startPk, ">=", WHERE);
+            cond = preparePkCond(startPk, startOperator, WHERE);
         }
-
         if (endPk != null && CollectionUtils.isNotEmpty(endPk.getPkValues())) {
-            cond += preparePkCond(endPk, "<", StringUtils.isEmpty(cond) ? WHERE : AND);
+            cond += preparePkCond(endPk, endOperator, StringUtils.isEmpty(cond) ? WHERE : AND);
         }
-
         return cond;
     }
 
     protected String wrappedTableName() {
-        return wrapName(tableDef.getName());
+        return wrapName(table.getName());
     }
 
     protected String wrapName(String name) {

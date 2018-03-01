@@ -8,18 +8,26 @@ import java.util.Map;
 /**
  * Created by cook on 2017/12/12
  */
-public interface SqlExecuteProvider {
+public interface SqlProvider {
 
     // QUERY rows
     /**
      * 查询行(s) - [startPk, endPk)
-     * 用于按 范围 获取数据
+     * 用于按 范围 获取数据, 前闭后开
      * @param startPk
      * @param endPk
      * @return
      */
     String prepareQueryRowByRange(PKData startPk, PKData endPk);
 
+    /**
+     * 查询行(s) - [startPk, endPk]
+     * 用于按 范围 获取数据, 前闭后闭
+     * @param startPk
+     * @param endPk
+     * @return
+     */
+    String prepareQueryRowByRangeClosed(PKData startPk, PKData endPk);
 
     /**
      * 查询行(s) - [(pageNo-1) * pageSize, pageNo * pageSize)
@@ -45,11 +53,11 @@ public interface SqlExecuteProvider {
     /**
      * [minPk, ) - 取 前 <code>pageSize</code> 行
      * 分页模式, 分步取行 - 每次从最小pk开始
-     * @param minPk
+     * @param startPk
      * @param pageSize
      * @return
      */
-    String prepareQueryRowByStep(PKData minPk, int pageSize);
+    String prepareQueryRowByStep(PKData startPk, int pageSize);
 
 
     /**

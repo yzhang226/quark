@@ -1,5 +1,10 @@
 package org.lightning.quark.db.crawler;
 
+import org.lightning.quark.core.model.db.DbVendor;
+import org.lightning.quark.core.model.metadata.MetaCatalog;
+import org.lightning.quark.core.model.metadata.MetaDatabase;
+import schemacrawler.schema.Catalog;
+import schemacrawler.schema.DatabaseInfo;
 import schemacrawler.schemacrawler.SchemaInfoLevel;
 
 /**
@@ -52,6 +57,22 @@ public abstract class CrawlerUtils {
         infoLevel.setRetrieveIndexColumnInformation(true);
 
         return infoLevel;
+    }
+
+    public static MetaCatalog createCatalogInfo(Catalog catalog) {
+        MetaCatalog cata = new MetaCatalog();
+        cata.setDatabase(createDbInfo(catalog));
+        return cata;
+    }
+
+    public static MetaDatabase createDbInfo(Catalog catalog) {
+        MetaDatabase database = new MetaDatabase();
+        DatabaseInfo info = catalog.getDatabaseInfo();
+        database.setProductName(info.getProductName());
+        database.setProductVersion(info.getProductVersion());
+        database.setUserName(info.getUserName());
+        database.setVendor(DbVendor.fromProductName(info.getProductName()));
+        return database;
     }
 
 }
