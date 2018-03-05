@@ -33,6 +33,8 @@ public abstract class MetadataConverter {
         MetaTable metaTable = new MetaTable();
         metaTable.setName(table.getName());
 
+//        table.getColumns().get(0).getOrdinalPosition()
+
         List<MetaColumn> metaColumns = table.getColumns().stream()
                 .map(MetadataConverter::convert)
                 .collect(Collectors.toList());

@@ -2,6 +2,7 @@ package org.lightning.quark.db.copy;
 
 import com.google.common.collect.Maps;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.lightning.quark.core.diff.RowDifference;
 import org.lightning.quark.core.model.db.PKData;
 import org.lightning.quark.core.model.db.RowDataInfo;
@@ -30,11 +31,12 @@ public class DataRowManager {
 
     private TableColumnMapping columnMapping;
 
-    public DataRowManager(MetaTable table, DataSource dataSource, TableColumnMapping columnMapping) {
+    public DataRowManager(MetaTable table, DataSource dataSource, SqlProvider sqlProvider,
+                          TableColumnMapping columnMapping) {
         this.table = table;
         this.dataSource = dataSource;
         this.dbManager = new DbManager(dataSource);
-        this.sqlProvider = SqlProviderFactory.createProvider(table.getCatalog().getDatabase().getVendor(), table);
+        this.sqlProvider = sqlProvider;
         this.columnMapping = columnMapping;
     }
 
@@ -140,6 +142,11 @@ public class DataRowManager {
         return endPk;
     }
 
+    /**
+     * 转换多行数据
+     * @param rows
+     * @return
+     */
     public Map<PKData, RowDataInfo> convertRow(List<Map<String, Object>> rows) {
         if (CollectionUtils.isEmpty(rows)) {
             return Collections.emptyMap();
@@ -147,18 +154,49 @@ public class DataRowManager {
 
         Map<PKData, RowDataInfo> pkRows = Maps.newHashMap();
         for (Map<String, Object> row : rows) {
-            PKData pk = new PKData();
-            table.getPrimaryKey().getColumns().forEach(col -> {
-                pk.addOnePk(col.getName(), row.get(col.getName()));
-            });
-
-            RowDataInfo rowDataInfo = new RowDataInfo();
-            rowDataInfo.setPk(pk);
-            rowDataInfo.setRow(row);
-            pkRows.put(pk, rowDataInfo);
+            RowDataInfo rowDataInfo = convertRow(row);
+            pkRows.put(rowDataInfo.getPk(), rowDataInfo);
         }
 
         return pkRows;
     }
+
+    /**
+     * 转换一行数据
+     * @param row
+     * @return
+     */
+    public RowDataInfo convertRow(Map<String, Object> row) {
+        if (MapUtils.isEmpty(row)) {
+            return null;
+        }
+
+        PKData pk = new PKData();
+        table.getPrimaryKey().getColumns().forEach(col -> {
+            pk.addOnePk(col.getName(), row.get(col.getName()));
+        });
+
+        RowDataInfo rowDataInfo = new RowDataInfo();
+        rowDataInfo.setPk(pk);
+        rowDataInfo.setRow(row);
+
+        return rowDataInfo;
+    }
+
+    /**
+     * 转换一行数据 - 原始行, 下标为数字(表示 - 第几列)
+     * @param rawRow
+     * @return
+     */
+    public RowDataInfo convertRawRow(Map<Integer, Object> rawRow) {
+        if (MapUtils.isEmpty(rawRow)) {
+            return null;
+        }
+        Map<String, Object> row = new HashMap<>(rawRow.size());
+        rawRow.forEach((ordinal, value) -> row.put(table.getColumns().get(ordinal.intValue()).getName(), value));
+        return convertRow(row);
+    }
+
+
 
 }

@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.0.0.RC1</version>
+        <version>2.0.0.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -29,6 +29,9 @@
 
     <dependencyManagement>
         <dependencies>
+
+            <!-- modules -->
+
             <dependency>
                 <groupId>org.lightning.quark</groupId>
                 <artifactId>quark-core</artifactId>
@@ -43,9 +46,37 @@
 
             <dependency>
                 <groupId>org.lightning.quark</groupId>
+                <artifactId>quark-chase</artifactId>
+                <version>${quark.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.lightning.quark</groupId>
                 <artifactId>quark-db</artifactId>
                 <version>${quark.version}</version>
             </dependency>
+
+            <dependency>
+                <groupId>org.lightning.quark</groupId>
+                <artifactId>quark-db-plugin-mysql</artifactId>
+                <version>${quark.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.lightning.quark</groupId>
+                <artifactId>quark-db-plugin-mssql</artifactId>
+                <version>${quark.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.lightning.quark</groupId>
+                <artifactId>quark-db</artifactId>
+                <version>1.0-SNAPSHOT</version>
+                <type>test-jar</type>
+                <scope>test</scope>
+            </dependency>
+
+            <!--  -->
 
             <dependency>
                 <groupId>commons-dbutils</groupId>
@@ -57,6 +88,12 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-dbcp2</artifactId>
                 <version>2.2.0</version>
+            </dependency>
+
+            <dependency>
+                <groupId>commons-beanutils</groupId>
+                <artifactId>commons-beanutils</artifactId>
+                <version>1.9.3</version>
             </dependency>
 
             <dependency>
@@ -121,6 +158,29 @@
                 <artifactId>jcl-over-slf4j</artifactId>
                 <version>1.7.25</version>
             </dependency>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>1.2.3</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-core</artifactId>
+                <version>1.2.3</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.alibaba.otter</groupId>
+                <artifactId>canal.client</artifactId>
+                <version>1.0.25</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github.shyiko</groupId>
+                <artifactId>mysql-binlog-connector-java</artifactId>
+                <version>0.13.0</version>
+            </dependency>
+
 
 
 
@@ -132,16 +192,14 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>
 
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
+
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
@@ -161,52 +219,16 @@
                     </execution>
                 </executions>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.20</version>
             </plugin>
+
         </plugins>
     </build>
 
-
-    <repositories>
-        <repository>
-            <id>spring-snapshots</id>
-            <name>Spring Snapshots</name>
-            <url>https://repo.spring.io/snapshot</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>spring-milestones</id>
-            <name>Spring Milestones</name>
-            <url>https://repo.spring.io/milestone</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
-
-    <pluginRepositories>
-        <pluginRepository>
-            <id>spring-snapshots</id>
-            <name>Spring Snapshots</name>
-            <url>https://repo.spring.io/snapshot</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </pluginRepository>
-        <pluginRepository>
-            <id>spring-milestones</id>
-            <name>Spring Milestones</name>
-            <url>https://repo.spring.io/milestone</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </pluginRepository>
-    </pluginRepositories>
 
     <modules>
         <module>quark-metadata</module>
@@ -215,6 +237,8 @@
         <module>quark-core</module>
         <module>quark-test</module>
         <module>quark-db</module>
+        <module>quark-db-plugin-mysql</module>
+        <module>quark-db-plugin-mssql</module>
     </modules>
 
 </project>

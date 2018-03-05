@@ -1,4 +1,4 @@
-package org.lightning.quark.db.test.metadata;
+package org.lightning.quark.db.test;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.h2.jdbcx.JdbcDataSource;
@@ -29,7 +29,7 @@ public class MetadataAcquireTest {
     public void tableMySQLMetadataTest() throws SQLException, SchemaCrawlerException {
         DataSource dataSource = DbTestUtils.createDemoMySQLDataSource();
         Connection connection = dataSource.getConnection();
-        String testTableName = "misc_table";
+        String testTableName = "alarm_user3";
 
         printTableColumnInfo(connection, testTableName);
 
@@ -48,16 +48,16 @@ public class MetadataAcquireTest {
         conn.close();
     }
 
-    @Test
-    public void tableMSSQLMetadataTest() throws SQLException, SchemaCrawlerException {
-        DataSource dataSource = DbTestUtils.createDemoSQLServerDataSource();
-        Connection connection = dataSource.getConnection();
-        String testTableName = "app_User";
-
-        printTableColumnInfo(connection, testTableName);
-
-        connection.close();
-    }
+//    @Test
+//    public void tableMSSQLMetadataTest() throws SQLException, SchemaCrawlerException {
+//        DataSource dataSource = DbTestUtils.createDemoSQLServerDataSource();
+//        Connection connection = dataSource.getConnection();
+//        String testTableName = "app_User";
+//
+//        printTableColumnInfo(connection, testTableName);
+//
+//        connection.close();
+//    }
 
     private void printTableColumnInfo2(Connection connection, String testTableName) throws SchemaCrawlerException, SQLException {
         TableMetadataFetcher fetcher = new TableMetadataFetcher(connection);

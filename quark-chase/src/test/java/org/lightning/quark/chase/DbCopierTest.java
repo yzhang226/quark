@@ -1,17 +1,18 @@
-package org.lightning.quark.db.test;
+package org.lightning.quark.chase;
 
-import com.google.common.collect.Maps;
+import org.lightning.quark.chase.copy.DataRowCopier;
 import org.lightning.quark.core.diff.DifferenceManager;
 import org.lightning.quark.core.model.db.CopyResult;
 import org.lightning.quark.core.model.db.PKData;
 import org.lightning.quark.core.model.metadata.MetaTable;
 import org.lightning.quark.core.row.TableColumnMapping;
-import org.lightning.quark.db.copy.DataRowCopier;
 import org.lightning.quark.db.copy.DataRowManager;
 import org.lightning.quark.db.crawler.TableMetadataFetcher;
+import org.lightning.quark.db.sql.SqlProvider;
+import org.lightning.quark.db.sql.SqlProviderFactory;
+import org.lightning.quark.db.test.BaseMySQLTestCase;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by cook on 2018/3/1
@@ -39,8 +40,11 @@ public class DbCopierTest extends BaseMySQLTestCase {
         columnMapping.addMapping("telephone", "telephone4");
         columnMapping.addMapping("weixin_account", "weixin_account5");
 
-        DataRowManager sourceManager = new DataRowManager(leftTable, dataSource, columnMapping);
-        DataRowManager targetManager = new DataRowManager(rightTable, dataSource, columnMapping);
+        SqlProvider leftSqlProvider = SqlProviderFactory.createProvider(leftTable);
+        SqlProvider rightSqlProvider = SqlProviderFactory.createProvider(rightTable);
+
+        DataRowManager sourceManager = new DataRowManager(leftTable, dataSource, leftSqlProvider, columnMapping);
+        DataRowManager targetManager = new DataRowManager(rightTable, dataSource, rightSqlProvider, columnMapping);
 
         DifferenceManager differenceManager = new DifferenceManager(columnMapping);
 

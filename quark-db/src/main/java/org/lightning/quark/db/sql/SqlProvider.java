@@ -1,5 +1,6 @@
 package org.lightning.quark.db.sql;
 
+import org.lightning.quark.core.model.db.DbVendor;
 import org.lightning.quark.core.model.db.PKData;
 
 import java.util.List;
@@ -162,6 +163,12 @@ public interface SqlProvider {
     String prepareCount(PKData startPk, PKData endPk);
 
     // END count
+
+    /**
+     * 数据库类型
+     * @return
+     */
+    DbVendor getVender();
 
 
 }

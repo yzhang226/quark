@@ -1,7 +1,10 @@
-package org.lightning.quark.db.sql;
+package org.lightning.quark.db.plugin.mssql.provider;
 
+import org.lightning.quark.core.model.db.DbVendor;
 import org.lightning.quark.core.model.db.PKData;
 import org.lightning.quark.core.model.metadata.MetaTable;
+import org.lightning.quark.db.sql.BaseSqlProvider;
+import org.lightning.quark.db.sql.SqlProviderFactory;
 
 import java.util.List;
 import java.util.Map;
@@ -10,6 +13,10 @@ import java.util.Map;
  * Created by cook on 2018/2/27
  */
 public class SQLServerSqlProvider extends BaseSqlProvider {
+
+    static {
+        SqlProviderFactory.registerProvider(DbVendor.MSSQL, SQLServerSqlProvider.class);
+    }
 
     public SQLServerSqlProvider(MetaTable tableDef) {
         super(tableDef);
@@ -103,5 +110,10 @@ public class SQLServerSqlProvider extends BaseSqlProvider {
     @Override
     public String prepareCount(PKData startPk, PKData endPk) {
         return null;
+    }
+
+    @Override
+    public DbVendor getVender() {
+        return DbVendor.MSSQL;
     }
 }

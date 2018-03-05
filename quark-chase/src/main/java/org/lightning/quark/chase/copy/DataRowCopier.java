@@ -1,4 +1,4 @@
-package org.lightning.quark.db.copy;
+package org.lightning.quark.chase.copy;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.lightning.quark.core.diff.DifferenceManager;
@@ -8,6 +8,7 @@ import org.lightning.quark.core.model.db.CopyResult;
 import org.lightning.quark.core.model.db.PKData;
 import org.lightning.quark.core.model.db.RowDataInfo;
 import org.lightning.quark.core.row.TableColumnMapping;
+import org.lightning.quark.db.copy.DataRowManager;
 
 import java.util.List;
 import java.util.Map;

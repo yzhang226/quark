@@ -11,13 +11,28 @@
     </parent>
 
     <groupId>org.lightning.quark</groupId>
-    <artifactId>quark-chase</artifactId>
+    <artifactId>quark-db-plugin-mysql</artifactId>
     <version>1.0-SNAPSHOT</version>
 
-    <name>quark-chase</name>
+    <name>quark-db-plugin-mysql</name>
     <url>http://maven.apache.org</url>
 
     <dependencies>
+
+        <dependency>
+            <groupId>org.lightning.quark</groupId>
+            <artifactId>quark-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.lightning.quark</groupId>
+            <artifactId>quark-db</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.shyiko</groupId>
+            <artifactId>mysql-binlog-connector-java</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.lightning.quark</groupId>
@@ -27,22 +42,6 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.lightning.quark</groupId>
-            <artifactId>quark-db-plugin-mysql</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.lightning.quark</groupId>
-            <artifactId>quark-db-plugin-mssql</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.lightning.quark</groupId>
-            <artifactId>quark-db</artifactId>
-            <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>
 
     </dependencies>
 </project>

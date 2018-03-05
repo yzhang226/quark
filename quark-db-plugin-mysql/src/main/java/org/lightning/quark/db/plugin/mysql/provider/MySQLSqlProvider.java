@@ -1,7 +1,10 @@
-package org.lightning.quark.db.sql;
+package org.lightning.quark.db.plugin.mysql.provider;
 
+import org.lightning.quark.core.model.db.DbVendor;
 import org.lightning.quark.core.model.db.PKData;
 import org.lightning.quark.core.model.metadata.MetaTable;
+import org.lightning.quark.db.sql.BaseSqlProvider;
+import org.lightning.quark.db.sql.SqlProviderFactory;
 
 import java.util.List;
 import java.util.Map;
@@ -11,6 +14,10 @@ import java.util.stream.Collectors;
  * Created by cook on 2018/2/25
  */
 public class MySQLSqlProvider extends BaseSqlProvider {
+
+    static {
+        SqlProviderFactory.registerProvider(DbVendor.MYSQL, MySQLSqlProvider.class);
+    }
 
     public MySQLSqlProvider(MetaTable tableDef) {
         super(tableDef);
@@ -82,9 +89,9 @@ public class MySQLSqlProvider extends BaseSqlProvider {
         String sql =  "SELECT {columns} FROM {tableName} {pkCond} " +
                 " ORDER BY {pkName} " ;
 
-        String pkCod = WHERE + pks.stream()
+        String pkCod = BaseSqlProvider.WHERE + pks.stream()
                 .map(pk -> "( " + preparePkCond(pk, "=", "") + " )")
-                .collect(Collectors.joining(OR));
+                .collect(Collectors.joining(BaseSqlProvider.OR));
 
         return sql.replace("{columns}", getColumnNames())
                 .replace("{tableName}", wrappedTableName())
@@ -106,7 +113,7 @@ public class MySQLSqlProvider extends BaseSqlProvider {
         return sql.replace("{columns}", getPkNames())
                 .replace("{tableName}", wrappedTableName())
                 .replace("{pkCond}", prepareEndPkCond(maxPk))
-                .replace("{pkName}", getPkNames(DESC))
+                .replace("{pkName}", getPkNames(BaseSqlProvider.DESC))
                 ;
     }
 
@@ -132,7 +139,7 @@ public class MySQLSqlProvider extends BaseSqlProvider {
         return sql.replace("{columns}", getPkNames())
                 .replace("{tableName}", wrappedTableName())
                 .replace("{pkCond}", prepareStartPkCond(startPk))
-                .replace("{pkName}", getPkNames(DESC))
+                .replace("{pkName}", getPkNames(BaseSqlProvider.DESC))
                 .replace("{pageSize}", ""+pageSize)
                 ;
     }
@@ -150,9 +157,9 @@ public class MySQLSqlProvider extends BaseSqlProvider {
     public String prepareDeleteRowByPks(List<PKData> pks) {
         String sql =  "DELETE FROM {tableName} {pkCond} ";
 
-        String pkCod = WHERE + pks.stream()
+        String pkCod = BaseSqlProvider.WHERE + pks.stream()
                 .map(pk -> "( " + preparePkCond(pk, "=", "") + " )")
-                .collect(Collectors.joining(OR));
+                .collect(Collectors.joining(BaseSqlProvider.OR));
 
         return sql
                 .replace("{tableName}", wrappedTableName())
@@ -168,7 +175,7 @@ public class MySQLSqlProvider extends BaseSqlProvider {
                 .map(column -> "" + column + "=?")
                 .collect(Collectors.joining(", "));
 
-        String pkCod = WHERE + preparePkCond(pk, "=", "");
+        String pkCod = BaseSqlProvider.WHERE + preparePkCond(pk, "=", "");
 
         return sql
                 .replace("{tableName}", wrappedTableName())
@@ -196,4 +203,8 @@ public class MySQLSqlProvider extends BaseSqlProvider {
                 ;
     }
 
+    @Override
+    public DbVendor getVender() {
+        return DbVendor.MYSQL;
+    }
 }
