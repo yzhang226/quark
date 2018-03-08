@@ -1,12 +1,10 @@
-package org.lightning.quark.db.test;
+package org.lightning.quark.test;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.h2.jdbcx.JdbcDataSource;
 import org.junit.Test;
 import org.lightning.quark.core.model.metadata.MetaTable;
 import org.lightning.quark.db.crawler.CrawlerUtils;
 import org.lightning.quark.db.crawler.TableMetadataFetcher;
-import org.lightning.quark.db.test.DbTestUtils;
 import schemacrawler.schema.*;
 import schemacrawler.schemacrawler.RegularExpressionInclusionRule;
 import schemacrawler.schemacrawler.SchemaCrawlerException;

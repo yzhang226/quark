@@ -1,4 +1,4 @@
-package org.lightning.quark.chase;
+package org.lightning.quark.test;
 
 import org.lightning.quark.chase.copy.DataRowCopier;
 import org.lightning.quark.core.diff.DifferenceManager;
@@ -10,7 +10,6 @@ import org.lightning.quark.db.copy.DataRowManager;
 import org.lightning.quark.db.crawler.TableMetadataFetcher;
 import org.lightning.quark.db.sql.SqlProvider;
 import org.lightning.quark.db.sql.SqlProviderFactory;
-import org.lightning.quark.db.test.BaseMySQLTestCase;
 
 import java.util.List;
 

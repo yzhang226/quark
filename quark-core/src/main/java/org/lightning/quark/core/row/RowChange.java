@@ -13,6 +13,8 @@ public class RowChange {
 
     private RowChangeType eventType;
 
-    private RowDataInfo row;
+    private RowDataInfo currentRow;
+
+    private RowDataInfo previousRow;
 
 }

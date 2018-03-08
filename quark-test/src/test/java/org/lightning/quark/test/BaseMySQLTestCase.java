@@ -1,6 +1,7 @@
-package org.lightning.quark.db.test;
+package org.lightning.quark.test;
 
 import junit.framework.TestCase;
+import org.lightning.quark.core.model.db.DataSourceParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,9 +15,11 @@ public abstract class BaseMySQLTestCase extends TestCase {
     protected static final Logger logger = LoggerFactory.getLogger(BaseMySQLTestCase.class);
 
     protected DataSource dataSource;
+    protected DataSourceParam param;
 
     @Override
     protected void setUp() throws Exception {
+        param = DbTestUtils.createMySQLParam();
         dataSource = DbTestUtils.createDemoMySQLDataSource();
         logger.info("setup dataSource {}", dataSource);
     }
@@ -26,4 +29,5 @@ public abstract class BaseMySQLTestCase extends TestCase {
         dataSource.getConnection().close();
         logger.info("tearDown dataSource {}", dataSource);
     }
+
 }

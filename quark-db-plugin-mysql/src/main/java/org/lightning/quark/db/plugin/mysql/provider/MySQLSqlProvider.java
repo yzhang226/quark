@@ -16,6 +16,10 @@ import java.util.stream.Collectors;
 public class MySQLSqlProvider extends BaseSqlProvider {
 
     static {
+        doRegister();
+    }
+
+    public static void doRegister() {
         SqlProviderFactory.registerProvider(DbVendor.MYSQL, MySQLSqlProvider.class);
     }
 

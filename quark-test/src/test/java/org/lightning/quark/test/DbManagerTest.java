@@ -1,4 +1,4 @@
-package org.lightning.quark.db.test;
+package org.lightning.quark.test;
 
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -25,7 +25,7 @@ public class DbManagerTest extends BaseMySQLTestCase {
     public void testQuery() {
         List<Map<String, Object>> res = dbManager.queryAsMap("select * from misc_table limit 10");
         res.forEach(row -> {
-            logger.info("row is {}", row);
+            logger.info("currentRow is {}", row);
         });
     }
 

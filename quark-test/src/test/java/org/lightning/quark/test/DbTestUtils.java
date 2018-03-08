@@ -1,4 +1,4 @@
-package org.lightning.quark.db.test;
+package org.lightning.quark.test;
 
 import org.h2.jdbcx.JdbcDataSource;
 import org.lightning.quark.core.model.db.DataSourceParam;
@@ -11,14 +11,17 @@ import javax.sql.DataSource;
  */
 public abstract class DbTestUtils {
 
-    public static DataSource createDemoMySQLDataSource() {
+    public static DataSourceParam createMySQLParam() {
         DataSourceParam param = new DataSourceParam();
         param.setDriverClassName("com.mysql.jdbc.Driver");
         param.setUrl("jdbc:mysql://127.0.0.1:3306/monitor?characterEncoding=UTF-8&useSSL=false&allowMultiQueries=true&nullNamePatternMatchesAll=true");
         param.setUsername("root");
         param.setPassword("6567zhyf");
+        return param;
+    }
 
-        return DSFactory.createDataSource(param);
+    public static DataSource createDemoMySQLDataSource() {
+        return DSFactory.createDataSource(createMySQLParam());
     }
 
     public static DataSource createDemoSQLServerDataSource() {

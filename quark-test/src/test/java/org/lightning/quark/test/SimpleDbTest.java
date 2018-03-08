@@ -1,4 +1,4 @@
-package org.lightning.quark.db.test;
+package org.lightning.quark.test;
 
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.MapHandler;
