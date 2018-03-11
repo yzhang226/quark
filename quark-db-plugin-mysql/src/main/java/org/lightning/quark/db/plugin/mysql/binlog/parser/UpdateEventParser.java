@@ -1,7 +1,9 @@
 package org.lightning.quark.db.plugin.mysql.binlog.parser;
 
 import com.github.shyiko.mysql.binlog.event.UpdateRowsEventData;
+import org.lightning.quark.core.model.metadata.MetaTable;
 import org.lightning.quark.core.row.RowChange;
+import org.lightning.quark.core.row.RowChangeEvent;
 import org.lightning.quark.core.row.RowChangeType;
 import org.lightning.quark.db.plugin.mysql.binlog.BaseEventParser;
 
@@ -21,22 +23,25 @@ public class UpdateEventParser extends BaseEventParser {
         super(dataSource);
     }
 
-    public List<RowChange> parse(UpdateRowsEventData data) {
+    public RowChangeEvent parse(UpdateRowsEventData data) {
         List<Serializable[]> previousRowValues = data.getRows().stream().map(Map.Entry::getKey).collect(Collectors.toList());
         List<Serializable[]> currentRowValues = data.getRows().stream().map(Map.Entry::getValue).collect(Collectors.toList());
 
         List<Map<Integer, Object>> previousValues = toRow(data.getIncludedColumnsBeforeUpdate(), previousRowValues);
         List<Map<Integer, Object>> currentValues = toRow(data.getIncludedColumns(), currentRowValues);
 
+        MetaTable metaTable = getMetaTable(data.getTableId());
+
         List<RowChange> changes = new ArrayList<>(previousRowValues.size());
         for (int i=0; i<previousValues.size(); i++) {
             RowChange change = new RowChange();
             change.setEventType(RowChangeType.UPDATE);
-            change.setCurrentRow(getMetaTable(data.getTableId()).convertRawRow(currentValues.get(i)));
-            change.setPreviousRow(getMetaTable(data.getTableId()).convertRawRow(previousValues.get(i)));
+            change.setCurrentRow(metaTable.convertRawRow(currentValues.get(i)));
+            change.setPreviousRow(metaTable.convertRawRow(previousValues.get(i)));
             changes.add(change);
         }
-        return changes;
+
+        return toChangeEvent(data.getTableId(), changes);
     }
 
 }

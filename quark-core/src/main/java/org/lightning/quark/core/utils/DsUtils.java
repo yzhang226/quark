@@ -1,7 +1,11 @@
 package org.lightning.quark.core.utils;
 
+import org.lightning.quark.core.exception.QuarkExecuteException;
 import org.lightning.quark.core.model.db.DataSourceParam;
 
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Properties;
 
 /**
@@ -41,6 +45,39 @@ public abstract class DsUtils {
         }
 
         return info;
+    }
+
+    /**
+     * Catalog as databaseName
+     *
+     * @param ds
+     */
+    public static String getDbName(DataSource ds) {
+        try {
+            return getDbName(ds.getConnection());
+        } catch (SQLException e) {
+            throw new QuarkExecuteException("getCatalog error", e);
+        }
+    }
+
+    public static String getDbName(Connection conn) {
+        String databaseName = null;
+        try {
+            databaseName = conn.getCatalog();
+            return databaseName;
+        } catch (Exception e) {
+            throw new QuarkExecuteException("getCatalog error", e);
+        }
+    }
+
+    public static String getSchema(Connection conn) {
+        String schema = null;
+        try {
+            schema = conn.getSchema();
+            return schema;
+        } catch (Exception e) {
+            throw new QuarkExecuteException("getSchema error", e);
+        }
     }
 
 }

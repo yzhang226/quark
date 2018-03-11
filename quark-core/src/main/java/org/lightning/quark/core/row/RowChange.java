@@ -13,8 +13,14 @@ public class RowChange {
 
     private RowChangeType eventType;
 
+    /**
+     * insert, update, delete, 此记录当前值
+     */
     private RowDataInfo currentRow;
 
+    /**
+     * 更新时, 此为旧值
+     */
     private RowDataInfo previousRow;
 
 }

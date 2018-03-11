@@ -1,6 +1,9 @@
 package org.lightning.quark.core.row;
 
 import com.google.common.collect.Maps;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.lightning.quark.core.model.metadata.MetaTable;
@@ -10,21 +13,66 @@ import java.util.Map;
 /**
  * Created by cook on 2018/3/1
  */
+@Getter
+@Setter
 public class TableColumnMapping {
 
-    private MetaTable table;
+    private String leftDbName;
+    private String rightDbName;
+
+    private String leftTableName;
+    private String rightTableName;
+
     /**
      * 左 - 右列名映射
      */
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
     private Map<String, String> leftRightMapping = Maps.newHashMap();
 
     /**
      * 右 - 左列名映射
      */
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
     private Map<String, String> rightLeftMapping = Maps.newHashMap();
 
-    public TableColumnMapping(MetaTable table) {
-        this.table = table;
+    public TableColumnMapping() {
+    }
+
+    public TableColumnMapping(String leftDbName, String rightDbName, String leftTableName, String rightTableName) {
+        this.leftDbName = leftDbName;
+        this.rightDbName = rightDbName;
+        this.leftTableName = leftTableName;
+        this.rightTableName = rightTableName;
+    }
+
+    /**
+     *
+     * @param leftTable
+     * @return
+     */
+    public static TableColumnMapping from(MetaTable leftTable) {
+        TableColumnMapping mapping = new TableColumnMapping();
+        mapping.setLeftDbName(leftTable.getDbName());
+        mapping.setLeftTableName(leftTable.getName());
+
+        return mapping;
+    }
+
+    /**
+     *
+     * @param leftTable
+     * @param rightTable
+     * @return
+     */
+    public static TableColumnMapping from(MetaTable leftTable, MetaTable rightTable) {
+        TableColumnMapping mapping = new TableColumnMapping();
+        mapping.setLeftDbName(leftTable.getDbName());
+        mapping.setLeftTableName(leftTable.getName());
+        mapping.setRightDbName(leftTable.getDbName());
+        mapping.setRightTableName(rightTable.getName());
+        return mapping;
     }
 
     public void addMapping(String leftColumnName, String rightColumnName) {
@@ -56,6 +104,10 @@ public class TableColumnMapping {
         }
         String leftColumnName = rightLeftMapping.get(rightColumnName);
         return StringUtils.isEmpty(leftColumnName) ? rightColumnName : leftColumnName;
+    }
+
+    public String getTableFullName() {
+        return leftDbName + "." + leftTableName;
     }
 
 }

@@ -34,6 +34,16 @@ public abstract class DbTestUtils {
         return DSFactory.createDataSource(param);
     }
 
+    public static DataSource createDemoSQLServerDataSourceInDev() {
+        DataSourceParam param = new DataSourceParam();
+        param.setDriverClassName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+        param.setUrl("jdbc:sqlserver://192.168.21.28:2433;DatabaseName=HJ_CRM");
+        param.setUsername("class_coder");
+        param.setPassword("D64D@6B2A");
+
+        return DSFactory.createDataSource(param);
+    }
+
     public static DataSource createDemoH2DataSource() {
         JdbcDataSource ds = new JdbcDataSource();
         ds.setURL("jdbc:h2:mem:sample;DATABASE_TO_UPPER=false;INIT=RUNSCRIPT FROM 'classpath:/scripts/h2/create.sql'");

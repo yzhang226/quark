@@ -27,6 +27,13 @@ public class MetaTable {
 
     private String name;
 
+    private String dbName;
+
+    /**
+     * catalog[.schema].tableName
+     */
+    private String fullName;
+
     /**
      *
      */

@@ -1,5 +1,6 @@
 package org.lightning.quark.db.copy;
 
+import com.google.common.collect.Lists;
 import org.apache.commons.collections4.CollectionUtils;
 import org.lightning.quark.core.diff.RowDifference;
 import org.lightning.quark.core.model.db.PKData;
@@ -64,6 +65,21 @@ public class DataRowManager {
         List<Object> endParams = endPk.getValues();
         startParams.addAll(endParams);
         return dbManager.queryAsMap(sql, startParams.toArray());
+    }
+
+    /**
+     *
+     * @param pks
+     * @return
+     */
+    public List<Map<String, Object>> fetchRowsByPks(Collection<PKData> pks) {
+        String sql = sqlProvider.prepareQueryRowByPks(pks);
+        List<Object> params = Lists.newArrayList();
+        pks.forEach(pk -> {
+            params.addAll(pk.getValues());
+        });
+
+        return dbManager.queryAsMap(sql, params.toArray());
     }
 
     public int insertRows(List<RowDifference> rows) {

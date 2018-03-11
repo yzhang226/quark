@@ -3,6 +3,7 @@ package org.lightning.quark.db.sql;
 import org.lightning.quark.core.model.db.DbVendor;
 import org.lightning.quark.core.model.db.PKData;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -67,7 +68,7 @@ public interface SqlProvider {
      * @param pks
      * @return
      */
-    String prepareQueryRowByPks(List<PKData> pks);
+    String prepareQueryRowByPks(Collection<PKData> pks);
 
 
     /**
@@ -168,7 +169,7 @@ public interface SqlProvider {
      * 数据库类型
      * @return
      */
-    DbVendor getVender();
+    DbVendor getVendor();
 
 
 }

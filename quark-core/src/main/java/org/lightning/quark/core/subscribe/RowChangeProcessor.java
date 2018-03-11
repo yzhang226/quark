@@ -2,6 +2,7 @@ package org.lightning.quark.core.subscribe;
 
 import org.lightning.quark.core.model.db.CopyResult;
 import org.lightning.quark.core.row.RowChange;
+import org.lightning.quark.core.row.RowChangeEvent;
 
 import java.util.List;
 
@@ -12,9 +13,8 @@ public interface RowChangeProcessor {
 
     /**
      *
-     * @param changes
      * @return
      */
-    CopyResult process(List<RowChange> changes);
+    CopyResult process(RowChangeEvent changeEvent);
 
 }

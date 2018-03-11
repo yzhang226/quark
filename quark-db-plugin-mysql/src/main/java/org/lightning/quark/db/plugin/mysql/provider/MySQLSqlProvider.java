@@ -6,6 +6,7 @@ import org.lightning.quark.core.model.metadata.MetaTable;
 import org.lightning.quark.db.sql.BaseSqlProvider;
 import org.lightning.quark.db.sql.SqlProviderFactory;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -89,7 +90,7 @@ public class MySQLSqlProvider extends BaseSqlProvider {
     }
 
     @Override
-    public String prepareQueryRowByPks(List<PKData> pks) {
+    public String prepareQueryRowByPks(Collection<PKData> pks) {
         String sql =  "SELECT {columns} FROM {tableName} {pkCond} " +
                 " ORDER BY {pkName} " ;
 
@@ -208,7 +209,7 @@ public class MySQLSqlProvider extends BaseSqlProvider {
     }
 
     @Override
-    public DbVendor getVender() {
+    public DbVendor getVendor() {
         return DbVendor.MYSQL;
     }
 }

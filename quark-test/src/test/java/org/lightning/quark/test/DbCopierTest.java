@@ -33,7 +33,7 @@ public class DbCopierTest extends BaseMySQLTestCase {
         List<MetaTable> metaTables2 = fetcher.fetchMetaTables(tableNames2);
         MetaTable rightTable = metaTables2.get(0);
 
-        TableColumnMapping columnMapping = new TableColumnMapping(leftTable);
+        TableColumnMapping columnMapping = new TableColumnMapping();
         columnMapping.addMapping("user_name", "user_name2");
         columnMapping.addMapping("email", "email3");
         columnMapping.addMapping("telephone", "telephone4");

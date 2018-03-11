@@ -3,6 +3,8 @@ package org.lightning.quark.core.subscribe;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
 import org.lightning.quark.core.row.RowChange;
+import org.lightning.quark.core.row.RowChangeEvent;
+import org.lightning.quark.core.row.TableColumnMappings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,11 +18,11 @@ import java.util.concurrent.BlockingQueue;
  *
  * Created by cook on 2018/3/9
  */
-public abstract class RowChangeDispatcher {
+public class RowChangeDispatcher {
     
     private static final Logger logger = LoggerFactory.getLogger(RowChangeDispatcher.class);
 
-    private static final BlockingQueue<List<RowChange>> queue = new ArrayBlockingQueue<>(10000);
+    private static final BlockingQueue<RowChangeEvent> queue = new ArrayBlockingQueue<>(10000);
 
     private static final List<RowChangeProcessor> processors = Lists.newArrayList();
 
@@ -33,12 +35,12 @@ public abstract class RowChangeDispatcher {
         processors.add(rowChangeProcessor);
     }
 
-    public static void pushChanges(List<RowChange> changes) {
-        if (CollectionUtils.isEmpty(changes)) {
+    public static void pushChanges(RowChangeEvent changeEvent) {
+        if (changeEvent != null && CollectionUtils.isEmpty(changeEvent.getChanges())) {
             return;
         }
         
-        queue.add(changes);
+        queue.add(changeEvent);
     }
 
     public synchronized static void startListen() {
@@ -47,19 +49,28 @@ public abstract class RowChangeDispatcher {
             return;
         }
 
-        List<RowChange> changes = null;
-        logger.info("start listen changes, processors size is {}", processors.size());
-        while (true) {
-            try {
-                changes = queue.take();
-                List<RowChange> finalChanges = changes;
-                processors.forEach(processor -> {
-                    processor.process(finalChanges);
-                });
-            } catch (InterruptedException e) {
-                logger.error("", e);
+        Thread thread = new Thread(() -> {
+            logger.info("start listen changes, processors size is {}", processors.size());
+            while (true) {
+                try {
+                    RowChangeEvent event = queue.take();
+                    processors.forEach(processor -> {
+                        if (TableColumnMappings.contains(event.getDbName(), event.getTableName())) {
+                            processor.process(event);
+                        } else {
+                            logger.warn("{}.{} do not exist mapping", event.getDbName(), event.getTableName());
+                        }
+                    });
+                } catch (Exception e) {
+                    logger.error("process error", e);
+                }
             }
-        }
+        });
+        thread.setName("RowDispatcher");
+        thread.setDaemon(true);
+
+        thread.start();
+
     }
 
 

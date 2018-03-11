@@ -1,8 +1,10 @@
 package org.lightning.quark.test;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.lightning.quark.core.model.metadata.MetaTable;
+import org.lightning.quark.core.utils.DsUtils;
 import org.lightning.quark.db.crawler.CrawlerUtils;
 import org.lightning.quark.db.crawler.TableMetadataFetcher;
 import schemacrawler.schema.*;
@@ -46,16 +48,16 @@ public class MetadataAcquireTest {
         conn.close();
     }
 
-//    @Test
-//    public void tableMSSQLMetadataTest() throws SQLException, SchemaCrawlerException {
-//        DataSource dataSource = DbTestUtils.createDemoSQLServerDataSource();
-//        Connection connection = dataSource.getConnection();
-//        String testTableName = "app_User";
-//
-//        printTableColumnInfo(connection, testTableName);
-//
-//        connection.close();
-//    }
+    @Test
+    public void tableMSSQLMetadataTest() throws SQLException, SchemaCrawlerException {
+        DataSource dataSource = DbTestUtils.createDemoSQLServerDataSourceInDev();
+        Connection connection = dataSource.getConnection();
+        String testTableName = "AlarmUser";// AlarmUser  app_User
+
+        printTableColumnInfo(connection, testTableName);
+
+        connection.close();
+    }
 
     private void printTableColumnInfo2(Connection connection, String testTableName) throws SchemaCrawlerException, SQLException {
         TableMetadataFetcher fetcher = new TableMetadataFetcher(connection);
@@ -76,8 +78,17 @@ public class MetadataAcquireTest {
         final SchemaCrawlerOptions options = new SchemaCrawlerOptions();
         options.setSchemaInfoLevel(CrawlerUtils.createLevel4generate());
         options.setTableNamePattern(testTableName);
-        String databaseName = connection.getCatalog();
-        RegularExpressionInclusionRule inclusionRule = new RegularExpressionInclusionRule(databaseName+"\\..*" + "|" + databaseName);
+        String databaseName = DsUtils.getDbName(connection);
+
+        String schema = connection.getSchema();
+        String dbPattern = null;
+        if (StringUtils.isNotBlank(schema)) {
+            dbPattern = databaseName + "." + schema + "\\..*" + "|" + databaseName + "." + schema;
+        } else {
+            dbPattern = databaseName+"\\..*" + "|" + databaseName;
+        }
+
+        RegularExpressionInclusionRule inclusionRule = new RegularExpressionInclusionRule(dbPattern);
         options.setSchemaInclusionRule(inclusionRule);
 
         final Catalog catalog = SchemaCrawlerUtility.getCatalog(connection, options);

@@ -4,6 +4,8 @@ import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
 import org.lightning.quark.core.exception.QuarkExecuteException;
 import org.lightning.quark.core.model.metadata.MetaTable;
+import org.lightning.quark.core.row.RowChange;
+import org.lightning.quark.core.row.RowChangeEvent;
 import org.lightning.quark.db.crawler.TableMetadataFetcher;
 
 import javax.sql.DataSource;
@@ -55,8 +57,7 @@ public abstract class BaseEventParser {
                 String databaseName = TableIdMapping.get(tableId).getDatabase();
 
                 TableMetadataFetcher fetcher = new TableMetadataFetcher(dataSource.getConnection(), databaseName);
-                List<MetaTable> metaTables = fetcher.fetchMetaTables(tableName);
-                MetaTable leftTable = metaTables.get(0);
+                MetaTable leftTable = fetcher.fetchMetaTableInCache(tableName);
 
                 caches.put(tableId, leftTable);
 
@@ -65,6 +66,17 @@ public abstract class BaseEventParser {
         } catch (SQLException e) {
             throw new QuarkExecuteException("", e);
         }
+    }
+
+    protected RowChangeEvent toChangeEvent(Long tableId, List<RowChange> changes) {
+        MetaTable metaTable = getMetaTable(tableId);
+
+        RowChangeEvent changeEvent = new RowChangeEvent();
+        changeEvent.setChanges(changes);
+        changeEvent.setDbName(metaTable.getDbName());
+        changeEvent.setTableName(metaTable.getName());
+
+        return changeEvent;
     }
 
 }

@@ -2,6 +2,8 @@ package org.lightning.quark.db.plugin.mysql.binlog;
 
 import com.github.shyiko.mysql.binlog.event.TableMapEventData;
 import com.google.common.collect.Maps;
+import org.lightning.quark.core.row.TableColumnMappings;
+import org.lightning.quark.core.utils.Q;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,6 +29,11 @@ public abstract class TableIdMapping {
 
     public static TableMapEventData get(Long tableId) {
         return tableIdCaches.get(tableId);
+    }
+
+    public static boolean containsMapping(Long tableId) {
+        TableMapEventData data = get(tableId);
+        return TableColumnMappings.contains(data.getDatabase(), data.getTable());
     }
 
 }

@@ -25,7 +25,7 @@ public class BinLogSalveServer extends Thread {
 
     public BinLogSalveServer(DataSourceParam param) {
         this.param = param;
-        URI uri = URI.create(param.getUrl());
+        URI uri = URI.create(param.getUrl().substring(5));
         host = uri.getHost();
         port = uri.getPort();
 
@@ -36,9 +36,12 @@ public class BinLogSalveServer extends Thread {
     public void run() {
         while (true) {
             try {
+                logger.info("0 connecting to data-source");
                 BinaryLogClient client = new BinaryLogClient(host, port, param.getUsername(), param.getPassword());
                 BinLogEventListener binLogEventListener = new BinLogEventListener(DSFactory.createDataSource(param));
                 client.registerEventListener(binLogEventListener);
+
+                logger.info("1 connecting to data-source");
 
                 client.connect();
             } catch (IOException e) {
@@ -47,9 +50,5 @@ public class BinLogSalveServer extends Thread {
             logger.warn("server client is disconnected, try reconnect");
         }
     }
-
-/*
-
-     */
 
 }

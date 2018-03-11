@@ -69,37 +69,40 @@ public class DataRowCopier {
         return copyResult;
     }
 
-    public CopyResult copyByChanges(List<RowChange> changes) {
-        CopyResult copyResult = new CopyResult();
-
+    /**
+     * 同步 变更(s) 至 目标表 
+     * @param changes
+     * @return
+     */
+    public CopyResult copyChanges(List<RowChange> changes) {
         Map<PKData, RowDataInfo> lefts = changes.stream()
                 .filter(Objects::nonNull)
                 .map(RowChange::getCurrentRow)
                 .collect(Collectors.toMap(RowDataInfo::getPk, x -> x));
-        Map<PKData, RowDataInfo> rights = changes.stream()
-                .filter(Objects::nonNull)
-                .map(RowChange::getPreviousRow)
-                .collect(Collectors.toMap(RowDataInfo::getPk, x -> x));
 
+        List<Map<String, Object>> rightRows = rightManager.fetchRowsByPks(lefts.keySet());
+
+        Map<PKData, RowDataInfo> rights = rightManager.getTable().convertRow(rightRows);
+
+        // ---------
         Map<DifferenceType, List<RowDifference>> diffMap = differenceManager.calcBatchRowDiffs(lefts, rights);
 
-        changes.forEach(change -> {
-            if (Objects.equals(change.getEventType(), RowChangeType.INSERT)) {
-                List<RowDifference> inserts = diffMap.get(DifferenceType.ONLY_IN_LEFT);
-                int insertNum = rightManager.insertRows(inserts);
-                copyResult.add(DifferenceType.ONLY_IN_LEFT, insertNum);
-            } else if (Objects.equals(change.getEventType(), RowChangeType.UPDATE)) {
-                List<RowDifference> updates = diffMap.get(DifferenceType.NOT_EQUALS);
-                int updateNum = rightManager.updateRows(updates);
-                copyResult.add(DifferenceType.NOT_EQUALS, updateNum);
-            } else if (Objects.equals(change.getEventType(), RowChangeType.DELETE)) {
-                List<RowDifference> deletes = diffMap.get(DifferenceType.ONLY_IN_RIGHT);
-                int deleteNum = rightManager.deleteRows(deletes);
-                copyResult.add(DifferenceType.ONLY_IN_RIGHT, deleteNum);
-            }
-        });
+        // 4. 执行 insert/update/delete
+        CopyResult copyResult = new CopyResult();
+        List<RowDifference> inserts = diffMap.get(DifferenceType.ONLY_IN_LEFT);
+        int insertNum = rightManager.insertRows(inserts);
+        copyResult.add(DifferenceType.ONLY_IN_LEFT, insertNum);
+
+        List<RowDifference> updates = diffMap.get(DifferenceType.NOT_EQUALS);
+        int updateNum = rightManager.updateRows(updates);
+        copyResult.add(DifferenceType.NOT_EQUALS, updateNum);
+
+        List<RowDifference> deletes = diffMap.get(DifferenceType.ONLY_IN_RIGHT);
+        int deleteNum = rightManager.deleteRows(deletes);
+        copyResult.add(DifferenceType.ONLY_IN_RIGHT, deleteNum);
 
         return copyResult;
+
     }
 
 }
