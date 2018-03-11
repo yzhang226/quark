@@ -1,5 +1,9 @@
 package org.lightning.quark.db.plugin.mysql.binlog;
 
+import com.github.shyiko.mysql.binlog.event.DeleteRowsEventData;
+import com.github.shyiko.mysql.binlog.event.Event;
+import com.github.shyiko.mysql.binlog.event.EventData;
+import com.github.shyiko.mysql.binlog.event.EventType;
 import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
 import org.lightning.quark.core.exception.QuarkExecuteException;
@@ -7,6 +11,7 @@ import org.lightning.quark.core.model.metadata.MetaTable;
 import org.lightning.quark.core.row.RowChange;
 import org.lightning.quark.core.row.RowChangeEvent;
 import org.lightning.quark.db.crawler.TableMetadataFetcher;
+import org.lightning.quark.db.meta.MetadataManager;
 
 import javax.sql.DataSource;
 import java.io.Serializable;
@@ -22,13 +27,22 @@ public abstract class BaseEventParser {
 
     private static final Interner<Long> lock = Interners.newWeakInterner();
 
-    protected TableMetadataFetcher metadataFetcher;
-    protected DataSource dataSource;
+    protected MetadataManager metadataManager;
 
-    public BaseEventParser(DataSource dataSource) {
-        this.dataSource = dataSource;
-
+    public BaseEventParser(MetadataManager metadataManager) {
+        this.metadataManager = metadataManager;
     }
+
+    /**
+     * 解析
+     * @param eventWrapper
+     * @return
+     */
+    public RowChangeEvent parse(EventWrapper eventWrapper) {
+        return parseInner(eventWrapper.getEvent().getData());
+    }
+
+    public abstract RowChangeEvent parseInner(EventData eventData);
 
     protected List<Map<Integer, Object>> toRow(BitSet columnBits, List<Serializable[]> rawRowValues) {
         List<Map<Integer, Object>> rows = new ArrayList<>(rawRowValues.size());
@@ -54,16 +68,14 @@ public abstract class BaseEventParser {
                 }
 
                 String tableName = TableIdMapping.get(tableId).getTable();
-                String databaseName = TableIdMapping.get(tableId).getDatabase();
 
-                TableMetadataFetcher fetcher = new TableMetadataFetcher(dataSource.getConnection(), databaseName);
-                MetaTable leftTable = fetcher.fetchMetaTableInCache(tableName);
+                MetaTable leftTable = metadataManager.getTable(tableName);
 
                 caches.put(tableId, leftTable);
 
                 return leftTable;
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             throw new QuarkExecuteException("", e);
         }
     }
@@ -78,5 +90,7 @@ public abstract class BaseEventParser {
 
         return changeEvent;
     }
+
+    public abstract List<EventType> getNeedProcessTypes();
 
 }

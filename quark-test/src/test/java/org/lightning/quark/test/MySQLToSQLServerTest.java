@@ -4,15 +4,12 @@ import org.junit.Test;
 import org.lightning.quark.chase.subscribe.RowChangeSubscriber;
 import org.lightning.quark.core.row.TableColumnMapping;
 import org.lightning.quark.core.row.TableColumnMappings;
-import org.lightning.quark.core.subscribe.RowChangeDispatcher;
-import org.lightning.quark.db.plugin.mssql.provider.SQLServerSqlProvider;
-import org.lightning.quark.db.plugin.mysql.provider.MySQLSqlProvider;
 import org.lightning.quark.db.plugin.mysql.server.BinLogSalveServer;
+import org.lightning.quark.test.base.BaseMySQLTestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
-import java.io.IOException;
 
 public class MySQLToSQLServerTest extends BaseMySQLTestCase {
 
@@ -21,8 +18,6 @@ public class MySQLToSQLServerTest extends BaseMySQLTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        MySQLSqlProvider.doRegister();
-        SQLServerSqlProvider.doRegister();
 
 
         DataSource leftDataSource = dataSource;
@@ -30,10 +25,12 @@ public class MySQLToSQLServerTest extends BaseMySQLTestCase {
         logger.info("setup rightDataSource {}", rightDataSource);
 
         String leftDbName = "monitor";
-        String rightDbName = "HJ_CRM";
-
         String leftTableName = "alarm_user";
+
+        String rightDbName = "HJ_CRM";
         String rightTableName = "AlarmUser";
+
+        //        String rightTableName = "user_ext1";
 
         TableColumnMapping mapping = new TableColumnMapping(leftDbName, rightDbName, leftTableName, rightTableName);
         mapping.addMapping("id", "ID");
@@ -42,17 +39,19 @@ public class MySQLToSQLServerTest extends BaseMySQLTestCase {
         mapping.addMapping("telephone", "Telephone");
         mapping.addMapping("weixin_account", "WeixinAccount");
 
+//        mapping.addMapping("id", "UserID");
+//        mapping.addMapping("telephone", "Cellphone");
+
         TableColumnMappings.register(mapping);
 
         RowChangeSubscriber subscriber = new RowChangeSubscriber(leftDataSource, rightDataSource);
-        RowChangeDispatcher.addSubscriber(subscriber);
-
-        RowChangeDispatcher.startListen();
+        dispatcher.addSubscriber(subscriber);
+        dispatcher.startListen();
     }
 
     @Test
-    public void testBinLogParse() throws IOException, InterruptedException {
-        BinLogSalveServer binLogSalveServer = new BinLogSalveServer(param);
+    public void testBinLogParse() throws Exception {
+        BinLogSalveServer binLogSalveServer = new BinLogSalveServer(param, dispatcher);
 
         binLogSalveServer.start();
 

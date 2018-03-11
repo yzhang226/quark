@@ -33,6 +33,13 @@
             <artifactId>commons-dbcp2</artifactId>
         </dependency>
 
+        <!--<dependency>-->
+            <!--<groupId>com.microsoft.sqlserver</groupId>-->
+            <!--<artifactId>sqljdbc4</artifactId>-->
+            <!--<version>4.0</version>-->
+        <!--</dependency>-->
+
+
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
@@ -46,9 +53,25 @@
             <groupId>us.fatehi</groupId>
             <artifactId>schemacrawler-mysql</artifactId>
         </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.microsoft.sqlserver</groupId>-->
+            <!--<artifactId>sqljdbc4</artifactId>-->
+        <!--</dependency>-->
+        <dependency>
+            <groupId>com.microsoft.sqlserver</groupId>
+            <artifactId>mssql-jdbc</artifactId>
+        </dependency>
+
+
         <dependency>
             <groupId>us.fatehi</groupId>
             <artifactId>schemacrawler-sqlserver</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.microsoft.sqlserver</groupId>
+                    <artifactId>mssql-jdbc</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>

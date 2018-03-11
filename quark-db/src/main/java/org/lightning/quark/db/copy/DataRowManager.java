@@ -95,7 +95,8 @@ public class DataRowManager {
                                                 .collect(Collectors.toList()))
                                         .collect(Collectors.toList());
 
-        List<Map<String, Object>> results = dbManager.insertBatch(sql, paramsList);
+        List<Map<String, Object>> results = dbManager.insertBatch(sqlProvider.getSqlBeforeInsertRow(), sql,
+                sqlProvider.getSqlAfterInsertRow(), paramsList);
         return results.size();
     }
 

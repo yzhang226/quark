@@ -158,6 +158,15 @@ public class MySQLSqlProvider extends BaseSqlProvider {
                 ;
     }
 
+    public String getSqlBeforeInsertRow() {
+        return null;
+    }
+
+    @Override
+    public String getSqlAfterInsertRow() {
+        return null;
+    }
+
     @Override
     public String prepareDeleteRowByPks(List<PKData> pks) {
         String sql =  "DELETE FROM {tableName} {pkCond} ";

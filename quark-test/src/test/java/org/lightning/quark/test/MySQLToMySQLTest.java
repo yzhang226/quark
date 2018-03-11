@@ -4,15 +4,12 @@ import org.junit.Test;
 import org.lightning.quark.chase.subscribe.RowChangeSubscriber;
 import org.lightning.quark.core.row.TableColumnMapping;
 import org.lightning.quark.core.row.TableColumnMappings;
-import org.lightning.quark.core.subscribe.RowChangeDispatcher;
-import org.lightning.quark.db.copy.DataRowManager;
-import org.lightning.quark.db.plugin.mysql.provider.MySQLSqlProvider;
 import org.lightning.quark.db.plugin.mysql.server.BinLogSalveServer;
+import org.lightning.quark.test.base.BaseMySQLTestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
-import java.io.IOException;
 
 public class MySQLToMySQLTest extends BaseMySQLTestCase {
 
@@ -21,11 +18,10 @@ public class MySQLToMySQLTest extends BaseMySQLTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        MySQLSqlProvider.doRegister();
-
 
         DataSource leftDataSource = dataSource;
-        DataSource rightDataSource = dataSource;
+        DataSource rightDataSource = DbTestUtils.createDemoMySQLDS4MyDb();
+        logger.info("rightDataSource is {}", rightDataSource);
 
         String leftDbName = "monitor";
         String rightDbName = "monitor";
@@ -42,15 +38,13 @@ public class MySQLToMySQLTest extends BaseMySQLTestCase {
         TableColumnMappings.register(mapping);
 
         RowChangeSubscriber subscriber = new RowChangeSubscriber(leftDataSource, rightDataSource);
-        RowChangeDispatcher.addSubscriber(subscriber);
-
-        RowChangeDispatcher.startListen();
+        dispatcher.addSubscriber(subscriber);
+        dispatcher.startListen();
     }
 
     @Test
-    public void testBinLogParse() throws IOException, InterruptedException {
-        BinLogSalveServer binLogSalveServer = new BinLogSalveServer(param);
-
+    public void testBinLogParse() throws Exception {
+        BinLogSalveServer binLogSalveServer = new BinLogSalveServer(param, dispatcher);
         binLogSalveServer.start();
 
         Thread.sleep(30 * 60 * 1000);

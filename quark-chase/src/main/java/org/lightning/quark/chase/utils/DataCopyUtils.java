@@ -36,10 +36,10 @@ public abstract class DataCopyUtils {
             TableColumnMapping mapping = TableColumnMappings.getMapping(leftDbName, leftTableName);
             QuarkAssertor.isTrue(mapping != null, "mapping not exist for db[%s].table[%s]", leftDbName, leftTableName);
 
-            TableMetadataFetcher leftFetcher = new TableMetadataFetcher(leftDataSource.getConnection());
+            TableMetadataFetcher leftFetcher = new TableMetadataFetcher(leftDataSource);
             MetaTable leftTable = leftFetcher.fetchMetaTableInCache(leftTableName);
 
-            TableMetadataFetcher rightFetcher = new TableMetadataFetcher(rightDataSource.getConnection());
+            TableMetadataFetcher rightFetcher = new TableMetadataFetcher(rightDataSource);
             MetaTable rightTable = rightFetcher.fetchMetaTableInCache(mapping.getRightTableName());
 
             SqlProvider leftSqlProvider = SqlProviderFactory.createProvider(leftTable);

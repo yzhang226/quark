@@ -3,6 +3,7 @@ package org.lightning.quark.test;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.MapHandler;
 import org.apache.commons.dbutils.handlers.MapListHandler;
+import org.lightning.quark.test.base.BaseMySQLTestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

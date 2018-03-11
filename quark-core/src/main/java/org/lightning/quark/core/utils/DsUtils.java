@@ -70,10 +70,10 @@ public abstract class DsUtils {
         }
     }
 
-    public static String getSchema(Connection conn) {
+    public static String getSchema(DataSource ds) {
         String schema = null;
         try {
-            schema = conn.getSchema();
+            schema = ds.getConnection().getSchema();
             return schema;
         } catch (Exception e) {
             throw new QuarkExecuteException("getSchema error", e);

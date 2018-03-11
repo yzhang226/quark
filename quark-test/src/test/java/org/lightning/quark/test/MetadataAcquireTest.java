@@ -27,7 +27,7 @@ public class MetadataAcquireTest {
 
     @Test
     public void tableMySQLMetadataTest() throws SQLException, SchemaCrawlerException {
-        DataSource dataSource = DbTestUtils.createDemoMySQLDataSource();
+        DataSource dataSource = DbTestUtils.createDemoMySQLDS4Monitor();
         Connection connection = dataSource.getConnection();
         String testTableName = "alarm_user3";
 
@@ -59,8 +59,8 @@ public class MetadataAcquireTest {
         connection.close();
     }
 
-    private void printTableColumnInfo2(Connection connection, String testTableName) throws SchemaCrawlerException, SQLException {
-        TableMetadataFetcher fetcher = new TableMetadataFetcher(connection);
+    private void printTableColumnInfo2(DataSource dataSource, String testTableName) throws SchemaCrawlerException, SQLException {
+        TableMetadataFetcher fetcher = new TableMetadataFetcher(dataSource);
         List<MetaTable> metaTables = fetcher.fetchMetaTables(testTableName);
 
         metaTables.forEach(metaTable -> {

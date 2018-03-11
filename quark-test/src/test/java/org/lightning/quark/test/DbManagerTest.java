@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.lightning.quark.db.datasource.DbManager;
+import org.lightning.quark.test.base.BaseMySQLTestCase;
 
 import java.util.Arrays;
 import java.util.List;

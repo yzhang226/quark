@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Map;
 
 /**
+ * tableId - 是Information中, 唯一
  * Created by cook on 2018/3/8
  */
 public abstract class TableIdMapping {

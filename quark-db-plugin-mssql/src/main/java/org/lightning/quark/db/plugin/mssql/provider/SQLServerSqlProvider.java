@@ -172,9 +172,20 @@ public class SQLServerSqlProvider extends BaseSqlProvider {
 //                            " END CATCH;  "
 //                + insertSql;
 
-        String resultSql =  " SET IDENTITY_INSERT " + super.wrappedTableName() + " ON; " +  insertSql;
+//        String resultSql =  " SET IDENTITY_INSERT " + table.getName() + " ON ; \n " +  insertSql;
+
+        String resultSql = insertSql;
 
         return resultSql;
+    }
+
+    public String getSqlBeforeInsertRow() {
+        return  " SET IDENTITY_INSERT " + super.wrappedTableName() + " ON ";
+    }
+
+    @Override
+    public String getSqlAfterInsertRow() {
+        return  " SET IDENTITY_INSERT " + super.wrappedTableName() + " OFF ";
     }
 
     @Override

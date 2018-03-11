@@ -115,6 +115,18 @@ public interface SqlProvider {
      */
     String prepareInsertRow();
 
+    /**
+     * 执行insert之前
+     * @return
+     */
+    String getSqlBeforeInsertRow();
+
+    /**
+     * 执行insert之后
+     * @return
+     */
+    String getSqlAfterInsertRow();
+
     // END INSERT
 
     // DELETE

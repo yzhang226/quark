@@ -8,7 +8,6 @@ import org.lightning.quark.core.model.db.CopyResult;
 import org.lightning.quark.core.model.db.PKData;
 import org.lightning.quark.core.model.db.RowDataInfo;
 import org.lightning.quark.core.row.RowChange;
-import org.lightning.quark.core.row.RowChangeType;
 import org.lightning.quark.core.row.TableColumnMapping;
 import org.lightning.quark.db.copy.DataRowManager;
 
@@ -47,6 +46,11 @@ public class DataRowCopier {
         PKData endPk = leftManager.getTable().getLastRowPk(leftRows);
         List<Map<String, Object>> rightRows = rightManager.fetchRowsByRangeClosed(startPk, endPk);
 
+
+        return compareAndCopy(leftRows, rightRows);
+    }
+
+    public CopyResult compareAndCopy(List<Map<String, Object>> leftRows, List<Map<String, Object>> rightRows) {
         // 3. 比对 两批 步长数据
         Map<PKData, RowDataInfo> lefts = leftManager.getTable().convertRow(leftRows);
         Map<PKData, RowDataInfo> rights = rightManager.getTable().convertRow(rightRows);
@@ -70,39 +74,33 @@ public class DataRowCopier {
     }
 
     /**
-     * 同步 变更(s) 至 目标表 
+     * 同步 变更(s) 至 目标表
      * @param changes
      * @return
      */
     public CopyResult copyChanges(List<RowChange> changes) {
-        Map<PKData, RowDataInfo> lefts = changes.stream()
+        List<PKData> leftPks = changes.stream()
                 .filter(Objects::nonNull)
-                .map(RowChange::getCurrentRow)
-                .collect(Collectors.toMap(RowDataInfo::getPk, x -> x));
+                .map(x -> x.getCurrentRow().getPk())
+                .collect(Collectors.toList());
 
-        List<Map<String, Object>> rightRows = rightManager.fetchRowsByPks(lefts.keySet());
+        // 1. 获取源 - in (pks) 的数据
+        List<Map<String, Object>> leftRows = leftManager.fetchRowsByPks(leftPks);
 
-        Map<PKData, RowDataInfo> rights = rightManager.getTable().convertRow(rightRows);
+        // 2. 获取目标 - in (pks) 的数据
+        List<Map<String, Object>> rightRows = rightManager.fetchRowsByPks(toRight(leftPks));
 
-        // ---------
-        Map<DifferenceType, List<RowDifference>> diffMap = differenceManager.calcBatchRowDiffs(lefts, rights);
+        return compareAndCopy(leftRows, rightRows);
+    }
 
-        // 4. 执行 insert/update/delete
-        CopyResult copyResult = new CopyResult();
-        List<RowDifference> inserts = diffMap.get(DifferenceType.ONLY_IN_LEFT);
-        int insertNum = rightManager.insertRows(inserts);
-        copyResult.add(DifferenceType.ONLY_IN_LEFT, insertNum);
-
-        List<RowDifference> updates = diffMap.get(DifferenceType.NOT_EQUALS);
-        int updateNum = rightManager.updateRows(updates);
-        copyResult.add(DifferenceType.NOT_EQUALS, updateNum);
-
-        List<RowDifference> deletes = diffMap.get(DifferenceType.ONLY_IN_RIGHT);
-        int deleteNum = rightManager.deleteRows(deletes);
-        copyResult.add(DifferenceType.ONLY_IN_RIGHT, deleteNum);
-
-        return copyResult;
-
+    private List<PKData> toRight(List<PKData> leftPks) {
+        return leftPks.stream().map(left -> {
+            PKData da = new PKData();
+            left.getPkValues().forEach(val -> {
+                da.addOnePk(tableColumnMapping.getRightColumnName(val.getKey()), val.getValue());
+            });
+            return da;
+        }).collect(Collectors.toList());
     }
 
 }

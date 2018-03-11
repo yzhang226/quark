@@ -10,6 +10,7 @@ import org.lightning.quark.db.copy.DataRowManager;
 import org.lightning.quark.db.crawler.TableMetadataFetcher;
 import org.lightning.quark.db.sql.SqlProvider;
 import org.lightning.quark.db.sql.SqlProviderFactory;
+import org.lightning.quark.test.base.BaseMySQLTestCase;
 
 import java.util.List;
 
@@ -25,7 +26,7 @@ public class DbCopierTest extends BaseMySQLTestCase {
         super.setUp();
 
         String tableNames = "alarm_user";
-        TableMetadataFetcher fetcher = new TableMetadataFetcher(dataSource.getConnection());
+        TableMetadataFetcher fetcher = new TableMetadataFetcher(dataSource);
         List<MetaTable> metaTables = fetcher.fetchMetaTables(tableNames);
         MetaTable leftTable = metaTables.get(0);
 

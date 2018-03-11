@@ -1,15 +1,18 @@
 package org.lightning.quark.db.datasource;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.MapHandler;
 import org.apache.commons.dbutils.handlers.MapListHandler;
+import org.apache.commons.lang3.StringUtils;
 import org.lightning.quark.core.exception.QuarkExecuteException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -21,11 +24,11 @@ public class DbManager {
     private static final Logger logger = LoggerFactory.getLogger(DbManager.class);
 
     private DataSource dataSource;
-    private QueryRunner runner;
+    private DsRunner runner;
 
     public DbManager(DataSource dataSource) {
         this.dataSource = dataSource;
-        runner = new QueryRunner(dataSource);
+        runner = new DsRunner(dataSource);
     }
 
     /**
@@ -40,7 +43,7 @@ public class DbManager {
         try {
             res = runner.query(sql, h, params);
             return res;
-        } catch (SQLException e) {
+        } catch (Exception e) {
             throw new QuarkExecuteException("queryAsMap error", e);
         }
     }
@@ -61,7 +64,7 @@ public class DbManager {
                 res = runner.insert(sql, mapHandler);
             }
             return res;
-        } catch (SQLException e) {
+        } catch (Exception e) {
             throw new QuarkExecuteException("insertOne error", e);
         }
     }
@@ -73,6 +76,21 @@ public class DbManager {
      * @return
      */
     public List<Map<String, Object>> insertBatch(String sql, List<List<Object>> paramsList) {
+        return insertBatch(null, sql, null, dataSource, paramsList);
+    }
+
+    public List<Map<String, Object>> insertBatch(String beforeSql, String sql, String afterSql,
+                                                 List<List<Object>> paramsList) {
+        return insertBatch(beforeSql, sql, afterSql, dataSource, paramsList);
+    }
+    /**
+     *
+     * @param sql
+     * @param paramsList
+     * @return
+     */
+    public List<Map<String, Object>> insertBatch(String beforeSql, String sql, String afterSql,
+                                                 DataSource dataSource, List<List<Object>> paramsList) {
         if (CollectionUtils.isEmpty(paramsList)) {
             logger.error("paramsList is empty");
             return null;
@@ -84,11 +102,24 @@ public class DbManager {
             arrs[i] = arr;
         }
         MapListHandler mapHandler = new MapListHandler();
+        Connection connection = null;
         try {
-            List<Map<String, Object>> res = runner.insertBatch(sql, mapHandler, arrs);
-            return res;
-        } catch (SQLException e) {
-            throw new QuarkExecuteException("insertBatch error", e);
+            connection = dataSource.getConnection();
+            if (StringUtils.isNotBlank(beforeSql)) {
+                execute(connection, beforeSql);
+                logger.debug("execute before sql: {}", beforeSql);
+            }
+            List<Map<String, Object>> res = runner.insertBatch(connection, sql, mapHandler, arrs);
+
+            if (StringUtils.isNotBlank(afterSql)) {
+                execute(connection, beforeSql);
+                logger.debug("execute before sql: {}", beforeSql);
+            }
+            return res == null ? Collections.emptyList() : res;
+        } catch (Exception e) {
+            throw new QuarkExecuteException("insertBatch error:" + sql, e);
+        } finally {
+//            DbUtils.closeQuietly(connection);
         }
     }
 
@@ -105,7 +136,7 @@ public class DbManager {
         }
         try {
             return runner.update(sql, arr);
-        } catch (SQLException e) {
+        } catch (Exception e) {
             throw new QuarkExecuteException("update error", e);
         }
     }
@@ -123,8 +154,30 @@ public class DbManager {
             } else {
                 return runner.execute(sql);
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             throw new QuarkExecuteException("update error", e);
+        }
+    }
+
+    public int execute(String sql) {
+        try {
+            return execute(dataSource.getConnection(), sql);
+        } catch (Exception e) {
+            throw new QuarkExecuteException("execute error", e);
+        }
+    }
+
+    public int execute(Connection conn, String sql) {
+        Statement stmt = null;
+        int rows = 0;
+        try {
+            stmt = conn.createStatement();
+            rows = stmt.executeUpdate(sql);
+            return rows;
+        } catch (Exception e) {
+            throw new QuarkExecuteException("execute error", e);
+        } finally {
+            DbUtils.closeQuietly(stmt);
         }
     }
 

@@ -16,6 +16,7 @@ import schemacrawler.schemacrawler.RegularExpressionInclusionRule;
 import schemacrawler.schemacrawler.SchemaCrawlerOptions;
 import schemacrawler.utility.SchemaCrawlerUtility;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.util.Collections;
 import java.util.List;
@@ -30,16 +31,16 @@ public class TableMetadataFetcher {
 
     private Map<String, MetaTable> tableCache = Maps.newHashMap();
 
-    private Connection connection;
+    private DataSource dataSource;
     private String databaseName;
 
-    public TableMetadataFetcher(Connection connection) {
-        this.connection = connection;
+    public TableMetadataFetcher(DataSource dataSource) {
+        this.dataSource = dataSource;
         this.databaseName = getDefaultCatalog();
     }
 
-    public TableMetadataFetcher(Connection connection, String databaseName) {
-        this.connection = connection;
+    public TableMetadataFetcher(DataSource dataSource, String databaseName) {
+        this.dataSource = dataSource;
         this.databaseName = databaseName;
     }
 
@@ -48,7 +49,7 @@ public class TableMetadataFetcher {
         options.setSchemaInfoLevel(CrawlerUtils.createLevel4Data());
         options.setTableNamePattern(tablePattern);
         if (StringUtils.isNotEmpty(databaseName)) {
-            String schema = DsUtils.getSchema(connection);
+            String schema = DsUtils.getSchema(dataSource);
             String dbPattern = null;
             if (StringUtils.isNotBlank(schema)) {
                 dbPattern = databaseName + "." + schema + "\\..*" + "|" + databaseName + "." + schema;
@@ -70,7 +71,7 @@ public class TableMetadataFetcher {
         try {
             SchemaCrawlerOptions options = createSchemaCrawlerOptions(tablePattern, databaseName);
 
-            Catalog catalog = SchemaCrawlerUtility.getCatalog(connection, options);
+            Catalog catalog = SchemaCrawlerUtility.getCatalog(dataSource.getConnection(), options);
             MetaCatalog metaCatalog = CrawlerUtils.createCatalogInfo(catalog);
 
             if (CollectionUtils.isNotEmpty(catalog.getTables())) {
@@ -115,7 +116,7 @@ public class TableMetadataFetcher {
     public String getDefaultCatalog() {
         String databaseName = null;
         try {
-            databaseName = connection.getCatalog();
+            databaseName = dataSource.getConnection().getCatalog();
             return databaseName;
         } catch (Exception e) {
             throw new QuarkExecuteException("getCatalog error", e);

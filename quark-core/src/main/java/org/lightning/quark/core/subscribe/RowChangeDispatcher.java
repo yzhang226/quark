@@ -28,14 +28,14 @@ public class RowChangeDispatcher {
 
     private static boolean isStarted = false;
 
-    public static void addSubscriber(RowChangeProcessor rowChangeProcessor) {
+    public void addSubscriber(RowChangeProcessor rowChangeProcessor) {
         if (rowChangeProcessor == null) {
             return;
         }
         processors.add(rowChangeProcessor);
     }
 
-    public static void pushChanges(RowChangeEvent changeEvent) {
+    public void dispatch(RowChangeEvent changeEvent) {
         if (changeEvent != null && CollectionUtils.isEmpty(changeEvent.getChanges())) {
             return;
         }
@@ -43,7 +43,7 @@ public class RowChangeDispatcher {
         queue.add(changeEvent);
     }
 
-    public synchronized static void startListen() {
+    public synchronized void startListen() {
         if (isStarted) {
             logger.warn("change listen already start");
             return;
@@ -55,10 +55,14 @@ public class RowChangeDispatcher {
                 try {
                     RowChangeEvent event = queue.take();
                     processors.forEach(processor -> {
-                        if (TableColumnMappings.contains(event.getDbName(), event.getTableName())) {
-                            processor.process(event);
-                        } else {
-                            logger.warn("{}.{} do not exist mapping", event.getDbName(), event.getTableName());
+                        try {
+                            if (TableColumnMappings.contains(event.getDbName(), event.getTableName())) {
+                                processor.process(event);
+                            } else {
+                                logger.warn("{}.{} do not exist mapping", event.getDbName(), event.getTableName());
+                            }
+                        } catch (Exception e) {
+                            logger.error("process change-event#" + event + " by processor#" + processor + " error", e);
                         }
                     });
                 } catch (Exception e) {
@@ -71,6 +75,7 @@ public class RowChangeDispatcher {
 
         thread.start();
 
+        isStarted = true;
     }
 
 
