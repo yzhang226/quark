@@ -70,14 +70,17 @@ public abstract class DbTestUtils {
         return param;
     }
 
-    public static DataSource createDemoSQLServerDataSourceInQA() {
+    public static DataSourceParam createDemoSQLServerDS4QA() {
         DataSourceParam param = new DataSourceParam();
         param.setDriverClassName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
         param.setUrl("jdbc:sqlserver://192.168.36.16:1433;DatabaseName=HJ_CRM");
         param.setUsername("class_coder");
         param.setPassword("A791#B578D6B64E31");
+        return param;
+    }
 
-        return DSFactory.createDataSource(param);
+    public static DataSource createDemoSQLServerDataSourceInQA() {
+        return DSFactory.createDataSource(createDemoSQLServerDS4QA());
     }
 
     public static DataSource createDemoH2DataSource() {

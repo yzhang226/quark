@@ -32,8 +32,8 @@ public abstract class BaseSQLServerTestCase extends TestCase {
 
     @Override
     protected void setUp() throws Exception {
-        param = DbTestUtils.createDemoSQLServerDS4Dev();
-        dataSource = DbTestUtils.createDemoSQLServerDataSourceInDev();
+        param = DbTestUtils.createDemoSQLServerDS4QA();
+        dataSource = DbTestUtils.createDemoSQLServerDataSourceInQA();
         logger.info("setup dataSource {}", dataSource);
 
         dbManager = new DbManager(dataSource);

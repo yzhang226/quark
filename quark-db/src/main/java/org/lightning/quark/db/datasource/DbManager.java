@@ -119,7 +119,7 @@ public class DbManager {
         } catch (Exception e) {
             throw new QuarkExecuteException("insertBatch error:" + sql, e);
         } finally {
-//            DbUtils.closeQuietly(connection);
+            DbUtils.closeQuietly(connection);
         }
     }
 

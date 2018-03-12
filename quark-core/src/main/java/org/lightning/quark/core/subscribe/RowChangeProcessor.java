@@ -1,6 +1,7 @@
 package org.lightning.quark.core.subscribe;
 
 import org.lightning.quark.core.model.db.CopyResult;
+import org.lightning.quark.core.model.db.DbVendor;
 import org.lightning.quark.core.row.RowChange;
 import org.lightning.quark.core.row.RowChangeEvent;
 
@@ -16,5 +17,11 @@ public interface RowChangeProcessor {
      * @return
      */
     CopyResult process(RowChangeEvent changeEvent);
+
+//    /**
+//     *
+//     * @return
+//     */
+//    DbVendor getProcessorVendor();
 
 }
