@@ -4,13 +4,22 @@ import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
 import com.google.common.collect.Maps;
 import org.lightning.quark.chase.copy.DataRowCopier;
-import org.lightning.quark.chase.utils.DataCopyUtils;
+import org.lightning.quark.core.diff.DifferenceManager;
+import org.lightning.quark.core.exception.QuarkExecuteException;
+import org.lightning.quark.core.model.column.TableColumnMapping;
 import org.lightning.quark.core.model.db.CopyResult;
+import org.lightning.quark.core.model.metadata.MetaTable;
 import org.lightning.quark.core.row.RowChangeEvent;
 import org.lightning.quark.core.subscribe.RowChangeProcessor;
 import org.lightning.quark.core.utils.Q;
+import org.lightning.quark.core.utils.QuarkAssertor;
+import org.lightning.quark.db.copy.DataRowManager;
+import org.lightning.quark.db.meta.MetadataManager;
+import org.lightning.quark.db.sql.SqlProvider;
+import org.lightning.quark.db.sql.SqlProviderFactory;
 
 import javax.sql.DataSource;
+import java.sql.SQLException;
 import java.util.Map;
 
 /**
@@ -22,12 +31,12 @@ public class RowChangeSubscriber implements RowChangeProcessor {
 
     private static final Interner<String> lock = Interners.newWeakInterner();
 
-    private DataSource leftDataSource;
-    private DataSource rightDataSource;
+    private MetadataManager leftManager;
+    private MetadataManager rightManager;
 
-    public RowChangeSubscriber(DataSource leftDataSource, DataSource rightDataSource) {
-        this.leftDataSource = leftDataSource;
-        this.rightDataSource = rightDataSource;
+    public RowChangeSubscriber(MetadataManager leftManager, MetadataManager rightManager) {
+        this.leftManager = leftManager;
+        this.rightManager = rightManager;
     }
 
     @Override
@@ -45,12 +54,45 @@ public class RowChangeSubscriber implements RowChangeProcessor {
 
         synchronized (lock.intern(fullName)) {
             if (!cache.containsKey(fullName)) {
-                copier = DataCopyUtils.createCopier(leftDataSource, rightDataSource, dbName, tableName);
+                copier = createCopier(leftManager.getDataSource(), rightManager.getDataSource(), dbName, tableName);
                 cache.put(fullName, copier);
             }
         }
 
         return cache.get(fullName);
+    }
+
+    /**
+     *
+     * @param leftDataSource
+     * @param rightDataSource
+     * @param leftDbName
+     * @param leftTableName
+     * @return
+     * @throws SQLException
+     */
+    public DataRowCopier createCopier(DataSource leftDataSource, DataSource rightDataSource,
+                                      String leftDbName, String leftTableName) {
+
+        try {
+            TableColumnMapping mapping = leftManager.getColumnMapping(leftDbName, leftTableName);
+            QuarkAssertor.isTrue(mapping != null, "mapping not exist for db[%s].table[%s]", leftDbName, leftTableName);
+
+            MetaTable leftTable = leftManager.getTable(leftTableName);
+            MetaTable rightTable = rightManager.getTable(mapping.getRightTableName());
+
+            SqlProvider leftSqlProvider = SqlProviderFactory.createProvider(leftTable);
+            SqlProvider rightSqlProvider = SqlProviderFactory.createProvider(rightTable);
+
+            DataRowManager sourceManager = new DataRowManager(leftTable, leftDataSource, leftSqlProvider, mapping);
+            DataRowManager targetManager = new DataRowManager(rightTable, rightDataSource, rightSqlProvider, mapping);
+
+            DifferenceManager differenceManager = new DifferenceManager(mapping);
+
+            return new DataRowCopier(sourceManager, targetManager, differenceManager, mapping);
+        } catch (Exception e) {
+            throw new QuarkExecuteException("createCopier for " + leftDbName + "." + leftTableName + " error", e);
+        }
     }
 
 }

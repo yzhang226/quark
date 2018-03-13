@@ -1,21 +1,17 @@
 package org.lightning.quark.db.plugin.mysql.binlog;
 
-import com.github.shyiko.mysql.binlog.event.DeleteRowsEventData;
-import com.github.shyiko.mysql.binlog.event.Event;
 import com.github.shyiko.mysql.binlog.event.EventData;
 import com.github.shyiko.mysql.binlog.event.EventType;
 import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
 import org.lightning.quark.core.exception.QuarkExecuteException;
+import org.lightning.quark.core.model.db.DbVendor;
 import org.lightning.quark.core.model.metadata.MetaTable;
 import org.lightning.quark.core.row.RowChange;
 import org.lightning.quark.core.row.RowChangeEvent;
-import org.lightning.quark.db.crawler.TableMetadataFetcher;
 import org.lightning.quark.db.meta.MetadataManager;
 
-import javax.sql.DataSource;
 import java.io.Serializable;
-import java.sql.SQLException;
 import java.util.*;
 
 /**
@@ -67,8 +63,7 @@ public abstract class BaseEventParser {
                     return caches.get(tableId);
                 }
 
-                String tableName = TableIdMapping.get(tableId).getTable();
-
+                String tableName = metadataManager.getTableIdData(tableId).getTable();
                 MetaTable leftTable = metadataManager.getTable(tableName);
 
                 caches.put(tableId, leftTable);
@@ -87,6 +82,7 @@ public abstract class BaseEventParser {
         changeEvent.setChanges(changes);
         changeEvent.setDbName(metaTable.getDbName());
         changeEvent.setTableName(metaTable.getName());
+        changeEvent.setVendor(DbVendor.MYSQL);
 
         return changeEvent;
     }

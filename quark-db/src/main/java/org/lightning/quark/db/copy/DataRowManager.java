@@ -5,7 +5,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.lightning.quark.core.diff.RowDifference;
 import org.lightning.quark.core.model.db.PKData;
 import org.lightning.quark.core.model.metadata.MetaTable;
-import org.lightning.quark.core.row.TableColumnMapping;
+import org.lightning.quark.core.model.column.TableColumnMapping;
 import org.lightning.quark.db.datasource.DbManager;
 import org.lightning.quark.db.sql.SqlProvider;
 

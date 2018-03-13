@@ -8,7 +8,12 @@
         </encoder>
     </appender>
 
+    <logger name="org.lightning.quark" level="DEBUG" />
+
     <root level="INFO">
+
+
+
         <appender-ref ref="STDOUT" />
     </root>
 </configuration>

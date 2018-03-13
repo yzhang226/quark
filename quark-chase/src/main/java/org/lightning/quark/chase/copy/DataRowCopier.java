@@ -8,7 +8,7 @@ import org.lightning.quark.core.model.db.CopyResult;
 import org.lightning.quark.core.model.db.PKData;
 import org.lightning.quark.core.model.db.RowDataInfo;
 import org.lightning.quark.core.row.RowChange;
-import org.lightning.quark.core.row.TableColumnMapping;
+import org.lightning.quark.core.model.column.TableColumnMapping;
 import org.lightning.quark.db.copy.DataRowManager;
 
 import java.util.List;

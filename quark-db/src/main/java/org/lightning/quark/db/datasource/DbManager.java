@@ -112,8 +112,8 @@ public class DbManager {
             List<Map<String, Object>> res = runner.insertBatch(connection, sql, mapHandler, arrs);
 
             if (StringUtils.isNotBlank(afterSql)) {
-                execute(connection, beforeSql);
-                logger.debug("execute before sql: {}", beforeSql);
+                execute(connection, afterSql);
+                logger.debug("execute after sql: {}", afterSql);
             }
             return res == null ? Collections.emptyList() : res;
         } catch (Exception e) {

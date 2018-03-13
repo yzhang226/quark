@@ -1,13 +1,11 @@
 package org.lightning.quark.db.crawler;
 
-import com.google.common.collect.Maps;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.lightning.quark.core.exception.QuarkExecuteException;
 import org.lightning.quark.core.model.metadata.MetaCatalog;
 import org.lightning.quark.core.model.metadata.MetaTable;
 import org.lightning.quark.core.utils.DsUtils;
-import org.lightning.quark.core.utils.QuarkAssertor;
 import org.lightning.quark.db.utils.MetadataConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,10 +15,8 @@ import schemacrawler.schemacrawler.SchemaCrawlerOptions;
 import schemacrawler.utility.SchemaCrawlerUtility;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by cook on 2018/2/25
@@ -28,8 +24,6 @@ import java.util.Map;
 public class TableMetadataFetcher {
 
     private static final Logger logger = LoggerFactory.getLogger(TableMetadataFetcher.class);
-
-    private Map<String, MetaTable> tableCache = Maps.newHashMap();
 
     private DataSource dataSource;
     private String databaseName;
@@ -86,27 +80,9 @@ public class TableMetadataFetcher {
             } else {
                 return Collections.emptyList();
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
             throw new QuarkExecuteException("fetchTables error", e);
         }
-    }
-
-    /**
-     * with cache
-     * @param tableName
-     * @return
-     */
-    public MetaTable fetchMetaTableInCache(String tableName) {
-        String fullTableName = databaseName + "." + tableName;
-        MetaTable table = tableCache.get(fullTableName);
-        if (table != null) {
-            return table;
-        }
-        List<MetaTable> ts = fetchMetaTables(tableName);
-        QuarkAssertor.isTrue(CollectionUtils.isNotEmpty(ts) && ts.size() == 1, "table#%s do not exist or has two same name table", tableName);
-        tableCache.put(fullTableName, ts.get(0));
-
-        return tableCache.get(fullTableName);
     }
 
     /**

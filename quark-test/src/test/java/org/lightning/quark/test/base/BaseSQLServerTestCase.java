@@ -2,14 +2,10 @@ package org.lightning.quark.test.base;
 
 import junit.framework.TestCase;
 import org.lightning.quark.core.model.db.DataSourceParam;
-import org.lightning.quark.core.subscribe.RowChangeDispatcher;
+import org.lightning.quark.db.dispatcher.RowChangeDispatcher;
 import org.lightning.quark.db.datasource.DbManager;
 import org.lightning.quark.db.meta.MetadataManager;
 import org.lightning.quark.db.plugin.mssql.provider.SQLServerSqlProvider;
-import org.lightning.quark.db.plugin.mysql.binlog.EventParserFactory;
-import org.lightning.quark.db.plugin.mysql.binlog.parser.DeleteEventParser;
-import org.lightning.quark.db.plugin.mysql.binlog.parser.InsertEventParser;
-import org.lightning.quark.db.plugin.mysql.binlog.parser.UpdateEventParser;
 import org.lightning.quark.db.plugin.mysql.provider.MySQLSqlProvider;
 import org.lightning.quark.test.DbTestUtils;
 import org.slf4j.Logger;

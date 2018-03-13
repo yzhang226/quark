@@ -2,7 +2,8 @@ package org.lightning.quark.test.base;
 
 import junit.framework.TestCase;
 import org.lightning.quark.core.model.db.DataSourceParam;
-import org.lightning.quark.core.subscribe.RowChangeDispatcher;
+import org.lightning.quark.db.datasource.DbManager;
+import org.lightning.quark.db.dispatcher.RowChangeDispatcher;
 import org.lightning.quark.db.meta.MetadataManager;
 import org.lightning.quark.db.plugin.mssql.provider.SQLServerSqlProvider;
 import org.lightning.quark.db.plugin.mysql.binlog.EventParserFactory;
@@ -23,9 +24,12 @@ public abstract class BaseMySQLTestCase extends TestCase {
 
     protected static final Logger logger = LoggerFactory.getLogger(BaseMySQLTestCase.class);
 
+
     protected DataSource dataSource;
     protected DataSourceParam param;
     protected RowChangeDispatcher dispatcher;
+    protected MetadataManager metadataManager;
+    protected DbManager dbManager;
 
     @Override
     protected void setUp() throws Exception {
@@ -33,7 +37,8 @@ public abstract class BaseMySQLTestCase extends TestCase {
         dataSource = DbTestUtils.createDemoMySQLDS4Monitor();
         logger.info("setup dataSource {}", dataSource);
 
-        MetadataManager metadataManager = new MetadataManager(dataSource);
+        metadataManager = new MetadataManager(dataSource);
+        dbManager = new DbManager(dataSource);
 
         InsertEventParser insertEventParser = new InsertEventParser(metadataManager);
         DeleteEventParser deleteEventParser = new DeleteEventParser(metadataManager);
@@ -42,7 +47,7 @@ public abstract class BaseMySQLTestCase extends TestCase {
         EventParserFactory.register(deleteEventParser);
         EventParserFactory.register(updateEventParser);
 
-        dispatcher = new RowChangeDispatcher();
+        dispatcher = new RowChangeDispatcher(metadataManager);
 
         MySQLSqlProvider.doRegister();
         SQLServerSqlProvider.doRegister();

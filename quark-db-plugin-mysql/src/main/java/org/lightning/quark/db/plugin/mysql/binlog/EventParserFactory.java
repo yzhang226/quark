@@ -29,7 +29,7 @@ public abstract class EventParserFactory {
 
     public static void register(EventType type, BaseEventParser parser) {
         parsers.put(type, parser);
-        logger.info("register type#{} with parser#{}", type, parser);
+        logger.info("registerColumnMapping type#{} with parser#{}", type, parser);
     }
 
 

@@ -19,7 +19,7 @@ public interface RowChangeProcessor {
     CopyResult process(RowChangeEvent changeEvent);
 
 //    /**
-//     *
+//     * 处理器 处理对应的 Vendor
 //     * @return
 //     */
 //    DbVendor getProcessorVendor();

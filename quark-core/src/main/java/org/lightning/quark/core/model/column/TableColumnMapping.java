@@ -1,4 +1,4 @@
-package org.lightning.quark.core.row;
+package org.lightning.quark.core.model.column;
 
 import com.google.common.collect.Maps;
 import lombok.AccessLevel;

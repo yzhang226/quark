@@ -2,13 +2,12 @@ package org.lightning.quark.db.plugin.mysql.server;
 
 import com.github.shyiko.mysql.binlog.BinaryLogClient;
 import org.lightning.quark.core.model.db.DataSourceParam;
-import org.lightning.quark.core.subscribe.RowChangeDispatcher;
-import org.lightning.quark.db.datasource.DSFactory;
+import org.lightning.quark.db.dispatcher.RowChangeDispatcher;
+import org.lightning.quark.db.meta.MetadataManager;
 import org.lightning.quark.db.plugin.mysql.binlog.BinLogEventListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.sql.DataSource;
 import java.io.IOException;
 import java.net.URI;
 
@@ -23,13 +22,15 @@ public class BinLogSalveServer extends Thread {
     private String host;
     private int port;
     private RowChangeDispatcher dispatcher;
+    private MetadataManager metadataManager;
 
-    public BinLogSalveServer(DataSourceParam param, RowChangeDispatcher dispatcher) {
+    public BinLogSalveServer(DataSourceParam param, RowChangeDispatcher dispatcher, MetadataManager metadataManager) {
         this.param = param;
         URI uri = URI.create(param.getUrl().substring(5));
         host = uri.getHost();
         port = uri.getPort();
         this.dispatcher = dispatcher;
+        this.metadataManager = metadataManager;
 
         setDaemon(true);
     }
@@ -39,7 +40,7 @@ public class BinLogSalveServer extends Thread {
         while (true) {
             try {
                 BinaryLogClient client = new BinaryLogClient(host, port, param.getUsername(), param.getPassword());
-                BinLogEventListener binLogEventListener = new BinLogEventListener(dispatcher);
+                BinLogEventListener binLogEventListener = new BinLogEventListener(dispatcher, metadataManager);
                 client.registerEventListener(binLogEventListener);
 
                 logger.info("connecting to data-source");

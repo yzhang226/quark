@@ -5,7 +5,7 @@ import org.lightning.quark.core.diff.DifferenceManager;
 import org.lightning.quark.core.model.db.CopyResult;
 import org.lightning.quark.core.model.db.PKData;
 import org.lightning.quark.core.model.metadata.MetaTable;
-import org.lightning.quark.core.row.TableColumnMapping;
+import org.lightning.quark.core.model.column.TableColumnMapping;
 import org.lightning.quark.db.copy.DataRowManager;
 import org.lightning.quark.db.crawler.TableMetadataFetcher;
 import org.lightning.quark.db.sql.SqlProvider;

@@ -6,7 +6,7 @@ import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.lightning.quark.core.model.db.PKData;
 import org.lightning.quark.core.model.db.RowDataInfo;
-import org.lightning.quark.core.row.TableColumnMapping;
+import org.lightning.quark.core.model.column.TableColumnMapping;
 import org.lightning.quark.core.utils.QuarkAssertor;
 import org.lightning.quark.core.utils.RowDiffUtils;
 

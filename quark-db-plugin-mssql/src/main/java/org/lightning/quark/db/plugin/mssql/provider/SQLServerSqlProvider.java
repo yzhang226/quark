@@ -242,4 +242,5 @@ public class SQLServerSqlProvider extends BaseSqlProvider {
     public DbVendor getVendor() {
         return DbVendor.MSSQL;
     }
+
 }

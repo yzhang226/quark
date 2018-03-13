@@ -1,10 +1,11 @@
-package org.lightning.quark.core.subscribe;
+package org.lightning.quark.db.dispatcher;
 
 import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
-import org.lightning.quark.core.row.RowChange;
 import org.lightning.quark.core.row.RowChangeEvent;
-import org.lightning.quark.core.row.TableColumnMappings;
+import org.lightning.quark.core.model.column.TableColumnMappings;
+import org.lightning.quark.core.subscribe.RowChangeProcessor;
+import org.lightning.quark.db.meta.MetadataManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,6 +28,12 @@ public class RowChangeDispatcher {
     private static final List<RowChangeProcessor> processors = Lists.newArrayList();
 
     private static boolean isStarted = false;
+
+    private MetadataManager metadataManager;
+
+    public RowChangeDispatcher(MetadataManager metadataManager) {
+        this.metadataManager = metadataManager;
+    }
 
     public void addSubscriber(RowChangeProcessor rowChangeProcessor) {
         if (rowChangeProcessor == null) {
@@ -56,7 +63,8 @@ public class RowChangeDispatcher {
                     RowChangeEvent event = queue.take();
                     processors.forEach(processor -> {
                         try {
-                            if (TableColumnMappings.contains(event.getDbName(), event.getTableName())) {
+                            logger.debug("row-change-event is {}, processor is {}", event, processor);
+                            if (metadataManager.containsColumnMapping(event.getDbName(), event.getTableName())) {
                                 processor.process(event);
                             } else {
                                 logger.warn("{}.{} do not exist mapping", event.getDbName(), event.getTableName());
@@ -70,7 +78,7 @@ public class RowChangeDispatcher {
                 }
             }
         });
-        thread.setName("RowDispatcher");
+        thread.setName("RowChangeDispatcher");
         thread.setDaemon(true);
 
         thread.start();
