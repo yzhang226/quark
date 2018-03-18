@@ -1,5 +1,9 @@
-package org.lightning.quark.core.utils;
+package org.lightning.quark.db.utils;
 
+import org.apache.commons.dbcp2.PoolableConnection;
+import org.apache.commons.dbutils.DbUtils;
+import org.apache.commons.pool2.impl.AbandonedConfig;
+import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.lightning.quark.core.exception.QuarkExecuteException;
 import org.lightning.quark.core.model.db.DataSourceParam;
 
@@ -31,20 +35,31 @@ public abstract class DsUtils {
         if (param.getInitialSize() != null) {
             info.put("initialSize", param.getInitialSize());
         }
+        return info;
+    }
+
+    public static void populatePoolConfig(DataSourceParam param, GenericObjectPool<PoolableConnection> pool) {
         if (param.getMaxTotal() != null) {
-            info.put("maxTotal", param.getMaxTotal());
+            pool.setMaxTotal(param.getMaxTotal());
         }
         if (param.getMaxIdle() != null) {
-            info.put("maxIdle", param.getMaxIdle());
+            pool.setMaxIdle(param.getMaxIdle());
         }
         if (param.getMinIdle() != null) {
-            info.put("minIdle", param.getMinIdle());
+            pool.setMinIdle(param.getMinIdle());
         }
         if (param.getMaxWaitMillis() != null) {
-            info.put("maxWaitMillis", param.getMaxWaitMillis());
+            pool.setMaxWaitMillis(param.getMaxWaitMillis());
         }
-
-        return info;
+        // TODO: change to config
+        pool.setTimeBetweenEvictionRunsMillis(60 * 1000);
+        pool.setMinEvictableIdleTimeMillis(120 * 1000);
+        pool.setBlockWhenExhausted(false);
+        AbandonedConfig abandonedConfig = new AbandonedConfig();
+        abandonedConfig.setLogAbandoned(true);
+        abandonedConfig.setRemoveAbandonedOnBorrow(true);
+        abandonedConfig.setRemoveAbandonedTimeout(120);
+        pool.setAbandonedConfig(abandonedConfig);
     }
 
     /**
@@ -53,10 +68,14 @@ public abstract class DsUtils {
      * @param ds
      */
     public static String getDbName(DataSource ds) {
+        Connection conn = null;
         try {
-            return getDbName(ds.getConnection());
+            conn = ds.getConnection();
+            return getDbName(conn);
         } catch (SQLException e) {
             throw new QuarkExecuteException("getCatalog error", e);
+        } finally {
+            DbUtils.closeQuietly(conn);
         }
     }
 
@@ -72,11 +91,15 @@ public abstract class DsUtils {
 
     public static String getSchema(DataSource ds) {
         String schema = null;
+        Connection conn = null;
         try {
-            schema = ds.getConnection().getSchema();
+            conn = ds.getConnection();
+            schema = conn.getSchema();
             return schema;
         } catch (Exception e) {
             throw new QuarkExecuteException("getSchema error", e);
+        } finally {
+            DbUtils.closeQuietly(conn);
         }
     }
 

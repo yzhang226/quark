@@ -21,6 +21,8 @@ public abstract class DbTestUtils {
         param.setUrl("jdbc:mysql://127.0.0.1:3306/" + dbName + "?characterEncoding=UTF-8&useSSL=false&allowMultiQueries=true&nullNamePatternMatchesAll=true");
         param.setUsername("root");
         param.setPassword("6567zhyf");
+        param.setMaxTotal(16);
+        param.setMaxWaitMillis(2 * 1000L);
         return param;
     }
 
@@ -38,7 +40,8 @@ public abstract class DbTestUtils {
         param.setUrl("jdbc:sqlserver://192.168.36.16:1433;DatabaseName=HJ_CRM");
         param.setUsername("class_coder");
         param.setPassword("A791#B578D6B64E31");
-
+        param.setMaxTotal(16);
+        param.setMaxWaitMillis(2 * 1000L);
         return DSFactory.createDataSource(param);
     }
 
@@ -67,6 +70,8 @@ public abstract class DbTestUtils {
         param.setUrl("jdbc:sqlserver://192.168.21.28:2433;DatabaseName=HJ_CRM");
         param.setUsername("class_coder");
         param.setPassword("D64D@6B2A");
+        param.setMaxTotal(16);
+        param.setMaxWaitMillis(2 * 1000L);
         return param;
     }
 
@@ -76,6 +81,10 @@ public abstract class DbTestUtils {
         param.setUrl("jdbc:sqlserver://192.168.36.16:1433;DatabaseName=HJ_CRM");
         param.setUsername("class_coder");
         param.setPassword("A791#B578D6B64E31");
+        param.setMaxTotal(16);
+        param.setMaxWaitMillis(2 * 1000L);
+//        param.set
+//        param.setMaxIdle();
         return param;
     }
 

@@ -31,6 +31,15 @@ public class CdcInfo {
      */
     private Date updateTime;
 
+    /**
+     * 更改操作的类型：
+     1 = 删除
+     2 = 插入
+     3 = 更新（捕获的列值是执行更新操作前的值）
+     4 = 更新（捕获的列值是执行更新操作后的值）
+     */
+    private int operation;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

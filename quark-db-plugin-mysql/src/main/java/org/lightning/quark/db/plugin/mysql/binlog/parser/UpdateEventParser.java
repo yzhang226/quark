@@ -11,7 +11,6 @@ import org.lightning.quark.core.row.RowChangeType;
 import org.lightning.quark.db.meta.MetadataManager;
 import org.lightning.quark.db.plugin.mysql.binlog.BaseEventParser;
 
-import javax.sql.DataSource;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;

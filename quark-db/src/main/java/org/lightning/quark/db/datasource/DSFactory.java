@@ -5,7 +5,7 @@ import org.apache.commons.dbcp2.*;
 import org.apache.commons.pool2.ObjectPool;
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.lightning.quark.core.model.db.DataSourceParam;
-import org.lightning.quark.core.utils.DsUtils;
+import org.lightning.quark.db.utils.DsUtils;
 
 import javax.sql.DataSource;
 import java.util.Map;
@@ -15,15 +15,15 @@ import java.util.Map;
  */
 public abstract class DSFactory {
 
-    private static final Map<DataSourceParam, ObjectPool<PoolableConnection>> pools = Maps.newHashMap();
+    private static final Map<DataSourceParam, GenericObjectPool<PoolableConnection>> pools = Maps.newHashMap();
 
     /**
      * 创建数据源-Pool
      * @param param
      * @return
      */
-    public static ObjectPool<PoolableConnection> getPool(DataSourceParam param) {
-        ObjectPool<PoolableConnection> connectionPool = pools.get(param);
+    public static GenericObjectPool<PoolableConnection> getPool(DataSourceParam param) {
+        GenericObjectPool<PoolableConnection> connectionPool = pools.get(param);
         if (connectionPool != null) {
             return connectionPool;
         }
@@ -35,6 +35,8 @@ public abstract class DSFactory {
                 new PoolableConnectionFactory(connectionFactory, null);
 
         connectionPool = new GenericObjectPool<>(poolableConnectionFactory);
+        DsUtils.populatePoolConfig(param, connectionPool);
+
         poolableConnectionFactory.setPool(connectionPool);
 
         pools.put(param, connectionPool);

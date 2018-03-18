@@ -10,14 +10,11 @@ import org.lightning.quark.core.row.RowChangeType;
 import org.lightning.quark.db.meta.MetadataManager;
 import org.lightning.quark.db.plugin.mysql.binlog.BaseEventParser;
 
-import javax.sql.DataSource;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.github.shyiko.mysql.binlog.event.EventType.*;
-import static com.github.shyiko.mysql.binlog.event.EventType.EXT_WRITE_ROWS;
-import static com.github.shyiko.mysql.binlog.event.EventType.WRITE_ROWS;
 
 /**
  * Created by cook on 2018/3/5

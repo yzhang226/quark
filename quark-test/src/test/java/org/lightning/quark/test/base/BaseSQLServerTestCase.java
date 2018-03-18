@@ -36,6 +36,8 @@ public abstract class BaseSQLServerTestCase extends TestCase {
 
         metadataManager = new MetadataManager(dataSource);
 
+        dispatcher = new RowChangeDispatcher(metadataManager);
+
         MySQLSqlProvider.doRegister();
         SQLServerSqlProvider.doRegister();
 

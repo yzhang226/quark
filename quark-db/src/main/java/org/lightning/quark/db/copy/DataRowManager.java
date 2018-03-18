@@ -23,8 +23,6 @@ public class DataRowManager {
 
     private MetaTable table;
 
-    private DataSource dataSource;
-
     private SqlProvider sqlProvider;
 
     private DbManager dbManager;
@@ -34,7 +32,6 @@ public class DataRowManager {
     public DataRowManager(MetaTable table, DataSource dataSource, SqlProvider sqlProvider,
                           TableColumnMapping columnMapping) {
         this.table = table;
-        this.dataSource = dataSource;
         this.dbManager = new DbManager(dataSource);
         this.sqlProvider = sqlProvider;
         this.columnMapping = columnMapping;

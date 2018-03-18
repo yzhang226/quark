@@ -2,7 +2,6 @@ package org.lightning.quark.db.datasource;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.dbutils.DbUtils;
-import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.MapHandler;
 import org.apache.commons.dbutils.handlers.MapListHandler;
 import org.apache.commons.lang3.StringUtils;
@@ -11,7 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.Statement;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -160,10 +160,14 @@ public class DbManager {
     }
 
     public int execute(String sql) {
+        Connection conn = null;
         try {
-            return execute(dataSource.getConnection(), sql);
+            conn = dataSource.getConnection();
+            return execute(conn, sql);
         } catch (Exception e) {
             throw new QuarkExecuteException("execute error", e);
+        } finally {
+            DbUtils.closeQuietly(conn);
         }
     }
 

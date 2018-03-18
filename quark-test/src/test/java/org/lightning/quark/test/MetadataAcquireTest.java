@@ -4,7 +4,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.lightning.quark.core.model.metadata.MetaTable;
-import org.lightning.quark.core.utils.DsUtils;
+import org.lightning.quark.db.utils.DsUtils;
 import org.lightning.quark.db.crawler.CrawlerUtils;
 import org.lightning.quark.db.crawler.TableMetadataFetcher;
 import schemacrawler.schema.*;

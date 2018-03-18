@@ -1,11 +1,12 @@
 package org.lightning.quark.db.crawler;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.lightning.quark.core.exception.QuarkExecuteException;
 import org.lightning.quark.core.model.metadata.MetaCatalog;
 import org.lightning.quark.core.model.metadata.MetaTable;
-import org.lightning.quark.core.utils.DsUtils;
+import org.lightning.quark.db.utils.DsUtils;
 import org.lightning.quark.db.utils.MetadataConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +16,7 @@ import schemacrawler.schemacrawler.SchemaCrawlerOptions;
 import schemacrawler.utility.SchemaCrawlerUtility;
 
 import javax.sql.DataSource;
+import java.sql.Connection;
 import java.util.Collections;
 import java.util.List;
 
@@ -62,10 +64,12 @@ public class TableMetadataFetcher {
      * @return
      */
     public List<MetaTable> fetchMetaTables(String tablePattern) {
+        Connection conn = null;
         try {
+            conn = dataSource.getConnection();
             SchemaCrawlerOptions options = createSchemaCrawlerOptions(tablePattern, databaseName);
 
-            Catalog catalog = SchemaCrawlerUtility.getCatalog(dataSource.getConnection(), options);
+            Catalog catalog = SchemaCrawlerUtility.getCatalog(conn, options);
             MetaCatalog metaCatalog = CrawlerUtils.createCatalogInfo(catalog);
 
             if (CollectionUtils.isNotEmpty(catalog.getTables())) {
@@ -82,6 +86,8 @@ public class TableMetadataFetcher {
             }
         } catch (Throwable e) {
             throw new QuarkExecuteException("fetchTables error", e);
+        } finally {
+            DbUtils.closeQuietly(conn);
         }
     }
 
@@ -90,13 +96,7 @@ public class TableMetadataFetcher {
      * @return
      */
     public String getDefaultCatalog() {
-        String databaseName = null;
-        try {
-            databaseName = dataSource.getConnection().getCatalog();
-            return databaseName;
-        } catch (Exception e) {
-            throw new QuarkExecuteException("getCatalog error", e);
-        }
+        return DsUtils.getDbName(dataSource);
     }
 
 }

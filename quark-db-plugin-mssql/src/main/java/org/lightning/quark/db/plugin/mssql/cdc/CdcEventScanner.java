@@ -4,6 +4,8 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.collections.CollectionUtils;
 import org.lightning.quark.core.model.db.RowDataInfo;
 import org.lightning.quark.core.model.metadata.MetaColumn;
@@ -11,9 +13,10 @@ import org.lightning.quark.core.model.metadata.MetaTable;
 import org.lightning.quark.core.row.CdcInfo;
 import org.lightning.quark.core.row.RowChange;
 import org.lightning.quark.core.row.RowChangeEvent;
+import org.lightning.quark.core.utils.Q;
 import org.lightning.quark.db.dispatcher.RowChangeDispatcher;
 import org.lightning.quark.core.utils.CdcUtils;
-import org.lightning.quark.core.utils.DsUtils;
+import org.lightning.quark.db.utils.DsUtils;
 import org.lightning.quark.db.datasource.DbManager;
 import org.lightning.quark.db.meta.MetadataManager;
 import org.slf4j.Logger;
@@ -22,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
@@ -52,6 +56,13 @@ public class CdcEventScanner {
 
     private Map<String, Date> lastScanLsns = Maps.newHashMap();
 
+    /**
+     * 扫描间隔
+     */
+    @Getter
+    @Setter
+    private long scanRoundIntervel = 5 * 1000L;
+
 
     /**
      * start_lsn -- seqval
@@ -71,9 +82,20 @@ public class CdcEventScanner {
     }
 
     /**
+     *
+     */
+    public void startScanJob() {
+        while (true) {
+            startScanAndDispatch();
+            Q.sleep(scanRoundIntervel);
+        }
+    }
+
+    /**
      * // TODO: 目前使用并行，后续改为akka
      */
     public void startScanAndDispatch() {
+        logger.info("one round start");
 
         Map<String, List<CdcInfo>> cdcMap = fetchCdcs();
 
@@ -97,6 +119,8 @@ public class CdcEventScanner {
 
         });
 
+        logger.info("one round done");
+
     }
 
     public Map<String, List<CdcInfo>> fetchCdcs() {
@@ -106,34 +130,42 @@ public class CdcEventScanner {
             Date startTime = lastScanLsns.getOrDefault(tbl, new Date(System.currentTimeMillis() - 15 * 60 * 1000));
             Date endTime = new Date(System.currentTimeMillis() + 10 * 1000);
 
-            List<Map<String, Object>> changeIds = queryChanges(tbl, startTime, endTime);
+            try {
+                List<Map<String, Object>> changeIds = queryChanges(tbl, startTime, endTime);
 
-            MetaTable metaTable = metadataManager.getTable(tbl);
-            List<CdcInfo> cdcs = changeIds.stream()
-                    .map(r -> {
-                        byte[] startLsn = (byte[]) r.get("startLsn");
-                        byte[] seqval = (byte[]) r.get("seqval");
-                        if (isLsnCached(startLsn, seqval)) {
-                            logger.info("scanned but already processed, startLsn is {}, seqval is {}", CdcUtils.bytesToLong(startLsn), CdcUtils.bytesToLong(seqval));
-                            return null;
-                        } else {
-                            cacheLsn(startLsn, seqval);
-                        }
+                MetaTable metaTable = metadataManager.getTable(tbl);
+                List<CdcInfo> cdcs = changeIds.stream()
+                        .map(r -> convertToCdcInfo(metaTable, r))
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toList());
 
-                        logger.info("scanned startLsn is {}, seqval is {}", CdcUtils.bytesToLong(startLsn), CdcUtils.bytesToLong(seqval));
-                        RowDataInfo info = metaTable.convertRow(r);
-
-                        CdcInfo cdc = new CdcInfo();
-                        cdc.setStartLsn(startLsn);
-                        cdc.setSeqval(seqval);
-                        cdc.setPk(info.getPk());
-                        return cdc;
-                    }).collect(Collectors.toList());
-
-            cdcMap.put(tbl, cdcs);
+                cdcMap.put(tbl, cdcs);
+            } catch (Exception e) {
+                logger.error("fetch cdcs error", e);
+            }
         });
 
         return cdcMap;
+    }
+
+    private CdcInfo convertToCdcInfo(MetaTable metaTable, Map<String, Object> r) {
+        byte[] startLsn = (byte[]) r.get("startLsn");
+        byte[] seqval = (byte[]) r.get("seqval");
+        if (isLsnCached(startLsn, seqval)) {
+            logger.info("scanned but already processed, startLsn is {}, seqval is {}", CdcUtils.bytesToLong(startLsn), CdcUtils.bytesToLong(seqval));
+            return null;
+        } else {
+            cacheLsn(startLsn, seqval);
+        }
+
+        logger.info("scanned startLsn is {}, seqval is {}", CdcUtils.bytesToLong(startLsn), CdcUtils.bytesToLong(seqval));
+        RowDataInfo info = metaTable.convertRow(r);
+
+        CdcInfo cdc = new CdcInfo();
+        cdc.setStartLsn(startLsn);
+        cdc.setSeqval(seqval);
+        cdc.setPk(info.getPk());
+        return cdc;
     }
 
     private void cacheLsn(byte[] startLsn, byte[] seqval) {
