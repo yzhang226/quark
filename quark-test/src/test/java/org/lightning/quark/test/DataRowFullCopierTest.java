@@ -1,25 +1,34 @@
-package org.lightning.quark.test.mssql;
+package org.lightning.quark.test;
 
+import org.lightning.quark.chase.copy.DataRowCopier;
 import org.lightning.quark.chase.copy.DataRowFullCopier;
+import org.lightning.quark.chase.processor.StepRowCopyProcessor;
 import org.lightning.quark.chase.subscribe.RowChangeSubscriber;
+import org.lightning.quark.core.diff.DifferenceManager;
+import org.lightning.quark.core.dispatch.ActionMessageDispatcher;
 import org.lightning.quark.core.model.column.TableColumnMapping;
+import org.lightning.quark.core.model.metadata.MetaTable;
 import org.lightning.quark.core.utils.Q;
+import org.lightning.quark.db.copy.DataRowManager;
 import org.lightning.quark.db.datasource.DbManager;
 import org.lightning.quark.db.meta.MetadataManager;
 import org.lightning.quark.db.plugin.mssql.cdc.CdcEventScanner;
-import org.lightning.quark.test.DbTestUtils;
+import org.lightning.quark.db.sql.SqlProvider;
+import org.lightning.quark.db.sql.SqlProviderFactory;
 import org.lightning.quark.test.base.BaseSQLServerTestCase;
 
 import javax.sql.DataSource;
 
 /**
- * Created by cook on 2018/3/14
+ * Created by cook on 2018/3/22
  */
-public class SQLServerToMySQLTest extends BaseSQLServerTestCase {
+public class DataRowFullCopierTest extends BaseSQLServerTestCase {
 
     private CdcEventScanner cdcEventScanner;
     private MetadataManager rightManager;
     private DbManager rightDbManager;
+
+    private DataRowFullCopier fullCopier;
 
     @Override
     protected void setUp() throws Exception {
@@ -82,17 +91,35 @@ public class SQLServerToMySQLTest extends BaseSQLServerTestCase {
         cdcEventScanner = new CdcEventScanner(dispatcher, metadataManager, dbManager);
         cdcEventScanner.addScanTable("evt_MarketingEvents");
 
+        ActionMessageDispatcher dispatcher = new ActionMessageDispatcher(true, 8);
 
+        DifferenceManager differenceManager = new DifferenceManager(mapping);
+
+        MetaTable leftTable = metadataManager.getTable(leftTableName);
+        MetaTable rightTable = rightManager.getTable(rightTableName);
+
+        SqlProvider leftSqlProvider = SqlProviderFactory.createProvider(leftTable);
+        SqlProvider rightSqlProvider = SqlProviderFactory.createProvider(rightTable);
+
+        DataRowManager sourceManager = new DataRowManager(leftTable, dataSource, leftSqlProvider, mapping);
+        DataRowManager targetManager = new DataRowManager(rightTable, rightDataSource, rightSqlProvider, mapping);
+
+
+        fullCopier = new DataRowFullCopier(sourceManager, targetManager, differenceManager, mapping, dispatcher);
+
+        DataRowCopier dataRowCopier = new DataRowCopier(sourceManager, targetManager, differenceManager, mapping);
+
+        new StepRowCopyProcessor(dataRowCopier);
 
     }
 
-    public void testCdcToMysql() {
+    public void testFullCopy() {
+        fullCopier.copyFullTable();
 
-        cdcEventScanner.startScanJob();
+        logger.info("test full copy done");
 
-//        Q.sleep(30 * 60 * 1000);
+        Q.sleep(20 * 60 * 1000);
     }
-
 
 
 }

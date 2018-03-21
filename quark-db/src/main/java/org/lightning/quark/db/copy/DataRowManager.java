@@ -38,6 +38,47 @@ public class DataRowManager {
     }
 
     /**
+     * 获取最小的pk
+     * @param maxPk
+     * @return
+     */
+    public PKData fetchMinPk(PKData maxPk) {
+        String sql = sqlProvider.prepareQueryMinPkByMaxPk(maxPk);
+        Object[] args = new Object[]{};
+        if (maxPk != null && CollectionUtils.isNotEmpty(maxPk.getValues())) {
+            args = maxPk.getValues().toArray();
+        }
+        List<Map<String, Object>> rows = dbManager.queryAsMap(sql, args);
+
+        if (CollectionUtils.isEmpty(rows)) {
+            return null;
+        }
+
+        return table.convertRow(rows.get(0)).getPk();
+    }
+
+    /**
+     * 获取一批中的最大的pk
+     * @param startPk
+     * @param pageSize
+     * @return
+     */
+    public PKData fetchMaxPk(PKData startPk, int pageSize) {
+        String sql = sqlProvider.prepareQueryMaxPkByStep(startPk, pageSize);
+        Object[] args = new Object[]{};
+        if (startPk != null && CollectionUtils.isNotEmpty(startPk.getValues())) {
+            args = startPk.getValues().toArray();
+        }
+        List<Map<String, Object>> rows = dbManager.queryAsMap(sql, args);
+
+        if (CollectionUtils.isEmpty(rows)) {
+            return null;
+        }
+
+        return table.convertRow(rows.get(0)).getPk();
+    }
+
+    /**
      * 按步长 取数据
      * @param startPk
      * @param pageSize
@@ -46,7 +87,6 @@ public class DataRowManager {
     public List<Map<String, Object>> fetchRowsByStep(PKData startPk, int pageSize) {
         String sql = sqlProvider.prepareQueryRowByStep(startPk, pageSize);
         List<Object> params = startPk.getValues();
-        params.add(pageSize);
         return dbManager.queryAsMap(sql, params.toArray());
     }
 

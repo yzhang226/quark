@@ -1,7 +1,9 @@
 package org.lightning.quark.test;
 
 import org.lightning.quark.chase.copy.DataRowCopier;
+import org.lightning.quark.chase.copy.DataRowFullCopier;
 import org.lightning.quark.core.diff.DifferenceManager;
+import org.lightning.quark.core.dispatch.ActionMessageDispatcher;
 import org.lightning.quark.core.model.db.CopyResult;
 import org.lightning.quark.core.model.db.PKData;
 import org.lightning.quark.core.model.metadata.MetaTable;
@@ -49,6 +51,7 @@ public class DbCopierTest extends BaseMySQLTestCase {
         DifferenceManager differenceManager = new DifferenceManager(columnMapping);
 
         dataRowCopier = new DataRowCopier(sourceManager, targetManager, differenceManager, columnMapping);
+
 
     }
 

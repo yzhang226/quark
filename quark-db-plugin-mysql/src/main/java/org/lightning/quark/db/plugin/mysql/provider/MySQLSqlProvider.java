@@ -71,8 +71,8 @@ public class MySQLSqlProvider extends BaseSqlProvider {
                 .replace("{tableName}", wrappedTableName())
                 .replace("{pkCond}", prepareEndPkCond(maxPk))
                 .replace("{pkName}", getPkNames())
-                .replace("{offset}", "" + offset)
-                .replace("{pageSize}", "" + pageSize)
+                .replace("{offset}", String.valueOf(offset))
+                .replace("{pageSize}", String.valueOf(pageSize))
                 ;
     }
 
@@ -85,7 +85,7 @@ public class MySQLSqlProvider extends BaseSqlProvider {
                 .replace("{tableName}", wrappedTableName())
                 .replace("{pkCond}", prepareStartPkCond(minPk))
                 .replace("{pkName}", getPkNames())
-                .replace("{pageSize}", "?")
+                .replace("{pageSize}", String.valueOf(pageSize))
                 ;
     }
 
@@ -139,13 +139,14 @@ public class MySQLSqlProvider extends BaseSqlProvider {
         String sql = "select {columns} from {tableName} {pkCond} " +
                 " ORDER BY {pkName} " +
                 " limit {pageSize}" ;
-        sql = "select * from (" + sql + ") as temp limit 1" ;
+        sql = "select * from (" + sql + ") as temp order by {pkNameDesc} limit 1" ;
 
         return sql.replace("{columns}", getPkNames())
                 .replace("{tableName}", wrappedTableName())
                 .replace("{pkCond}", prepareStartPkCond(startPk))
-                .replace("{pkName}", getPkNames(BaseSqlProvider.DESC))
-                .replace("{pageSize}", ""+pageSize)
+                .replace("{pkName}", getPkNames())
+                .replace("{pkNameDesc}", getPkNames(DESC))
+                .replace("{pageSize}", String.valueOf(pageSize))
                 ;
     }
 

@@ -10,6 +10,8 @@ import org.lightning.quark.core.model.db.RowDataInfo;
 import org.lightning.quark.core.row.RowChange;
 import org.lightning.quark.core.model.column.TableColumnMapping;
 import org.lightning.quark.db.copy.DataRowManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
@@ -21,6 +23,8 @@ import java.util.stream.Collectors;
  * Created by cook on 2018/2/26
  */
 public class DataRowCopier {
+
+    private static final Logger logger = LoggerFactory.getLogger(DataRowCopier.class);
 
     private DataRowManager leftManager;
     private DataRowManager rightManager;
@@ -69,6 +73,10 @@ public class DataRowCopier {
         List<RowDifference> deletes = diffMap.get(DifferenceType.ONLY_IN_RIGHT);
         int deleteNum = rightManager.deleteRows(deletes);
         copyResult.add(DifferenceType.ONLY_IN_RIGHT, deleteNum);
+
+        logger.info("table#{}, copy result is insert {} rows, update {} rows, delete {} rows",
+                leftManager.getTable().getName(), CollectionUtils.size(inserts), CollectionUtils.size(updates),
+                CollectionUtils.size(deletes));
 
         return copyResult;
     }
