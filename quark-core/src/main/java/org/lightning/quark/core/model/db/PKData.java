@@ -65,7 +65,7 @@ public class PKData {
 
     @Override
     public int hashCode() {
-        return Objects.hash(pkValues.toArray());
+        return Objects.hash(pkValues.stream().map(Pair::getValue).toArray());
     }
 
     @Override

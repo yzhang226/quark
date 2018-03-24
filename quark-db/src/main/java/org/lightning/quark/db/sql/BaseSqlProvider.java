@@ -34,7 +34,7 @@ public abstract class BaseSqlProvider implements SqlProvider {
 
     protected String getColumnsText(List<MetaColumn> columns, String columnSuffix) {
         return columns.stream()
-                .map(x -> wrapName(x.getName()) + StringUtils.trimToEmpty(columnSuffix))
+                .map(x -> wrapName(x.getName()) + " " + StringUtils.trimToEmpty(columnSuffix))
                 .collect(Collectors.joining(","));
     }
 

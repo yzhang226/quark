@@ -1,18 +1,19 @@
 package org.lightning.quark.db.copy;
 
-import com.google.common.collect.Maps;
+import com.google.common.collect.Lists;
 import org.apache.commons.collections4.CollectionUtils;
 import org.lightning.quark.core.diff.RowDifference;
 import org.lightning.quark.core.model.db.PKData;
-import org.lightning.quark.core.model.db.RowDataInfo;
 import org.lightning.quark.core.model.metadata.MetaTable;
-import org.lightning.quark.core.row.TableColumnMapping;
+import org.lightning.quark.core.model.column.TableColumnMapping;
 import org.lightning.quark.db.datasource.DbManager;
 import org.lightning.quark.db.sql.SqlProvider;
-import org.lightning.quark.db.sql.SqlProviderFactory;
 
 import javax.sql.DataSource;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -22,20 +23,59 @@ public class DataRowManager {
 
     private MetaTable table;
 
-    private DataSource dataSource;
-
     private SqlProvider sqlProvider;
 
     private DbManager dbManager;
 
     private TableColumnMapping columnMapping;
 
-    public DataRowManager(MetaTable table, DataSource dataSource, TableColumnMapping columnMapping) {
+    public DataRowManager(MetaTable table, DataSource dataSource, SqlProvider sqlProvider,
+                          TableColumnMapping columnMapping) {
         this.table = table;
-        this.dataSource = dataSource;
         this.dbManager = new DbManager(dataSource);
-        this.sqlProvider = SqlProviderFactory.createProvider(table.getCatalog().getDatabase().getVendor(), table);
+        this.sqlProvider = sqlProvider;
         this.columnMapping = columnMapping;
+    }
+
+    /**
+     * 获取最小的pk
+     * @param maxPk
+     * @return
+     */
+    public PKData fetchMinPk(PKData maxPk) {
+        String sql = sqlProvider.prepareQueryMinPkByMaxPk(maxPk);
+        Object[] args = new Object[]{};
+        if (maxPk != null && CollectionUtils.isNotEmpty(maxPk.getValues())) {
+            args = maxPk.getValues().toArray();
+        }
+        List<Map<String, Object>> rows = dbManager.queryAsMap(sql, args);
+
+        if (CollectionUtils.isEmpty(rows)) {
+            return null;
+        }
+
+        return table.convertRow(rows.get(0)).getPk();
+    }
+
+    /**
+     * 获取一批中的最大的pk
+     * @param startPk
+     * @param pageSize
+     * @return
+     */
+    public PKData fetchMaxPk(PKData startPk, int pageSize) {
+        String sql = sqlProvider.prepareQueryMaxPkByStep(startPk, pageSize);
+        Object[] args = new Object[]{};
+        if (startPk != null && CollectionUtils.isNotEmpty(startPk.getValues())) {
+            args = startPk.getValues().toArray();
+        }
+        List<Map<String, Object>> rows = dbManager.queryAsMap(sql, args);
+
+        if (CollectionUtils.isEmpty(rows)) {
+            return null;
+        }
+
+        return table.convertRow(rows.get(0)).getPk();
     }
 
     /**
@@ -47,7 +87,6 @@ public class DataRowManager {
     public List<Map<String, Object>> fetchRowsByStep(PKData startPk, int pageSize) {
         String sql = sqlProvider.prepareQueryRowByStep(startPk, pageSize);
         List<Object> params = startPk.getValues();
-        params.add(pageSize);
         return dbManager.queryAsMap(sql, params.toArray());
     }
 
@@ -65,6 +104,21 @@ public class DataRowManager {
         return dbManager.queryAsMap(sql, startParams.toArray());
     }
 
+    /**
+     *
+     * @param pks
+     * @return
+     */
+    public List<Map<String, Object>> fetchRowsByPks(Collection<PKData> pks) {
+        String sql = sqlProvider.prepareQueryRowByPks(pks);
+        List<Object> params = Lists.newArrayList();
+        pks.forEach(pk -> {
+            params.addAll(pk.getValues());
+        });
+
+        return dbManager.queryAsMap(sql, params.toArray());
+    }
+
     public int insertRows(List<RowDifference> rows) {
         if (CollectionUtils.isEmpty(rows)) {
             return 0;
@@ -78,7 +132,8 @@ public class DataRowManager {
                                                 .collect(Collectors.toList()))
                                         .collect(Collectors.toList());
 
-        List<Map<String, Object>> results = dbManager.insertBatch(sql, paramsList);
+        List<Map<String, Object>> results = dbManager.insertBatch(sqlProvider.getSqlBeforeInsertRow(), sql,
+                sqlProvider.getSqlAfterInsertRow(), paramsList);
         return results.size();
     }
 
@@ -120,45 +175,7 @@ public class DataRowManager {
         return deleted[0];
     }
 
-
-    /**
-     *
-     * @param rows
-     * @return
-     */
-    public PKData getLastRowPk(List<Map<String, Object>> rows) {
-        Map<String, Object> row = rows.get(rows.size() - 1);
-
-        PKData endPk = new PKData();
-
-        row.forEach((name, value) -> {
-            if (table.isPrimaryKey(name)) {
-                endPk.addOnePk(name, value);
-            }
-        });
-
-        return endPk;
+    public MetaTable getTable() {
+        return table;
     }
-
-    public Map<PKData, RowDataInfo> convertRow(List<Map<String, Object>> rows) {
-        if (CollectionUtils.isEmpty(rows)) {
-            return Collections.emptyMap();
-        }
-
-        Map<PKData, RowDataInfo> pkRows = Maps.newHashMap();
-        for (Map<String, Object> row : rows) {
-            PKData pk = new PKData();
-            table.getPrimaryKey().getColumns().forEach(col -> {
-                pk.addOnePk(col.getName(), row.get(col.getName()));
-            });
-
-            RowDataInfo rowDataInfo = new RowDataInfo();
-            rowDataInfo.setPk(pk);
-            rowDataInfo.setRow(row);
-            pkRows.put(pk, rowDataInfo);
-        }
-
-        return pkRows;
-    }
-
 }

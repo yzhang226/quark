@@ -6,7 +6,7 @@ import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.lightning.quark.core.model.db.PKData;
 import org.lightning.quark.core.model.db.RowDataInfo;
-import org.lightning.quark.core.row.TableColumnMapping;
+import org.lightning.quark.core.model.column.TableColumnMapping;
 import org.lightning.quark.core.utils.QuarkAssertor;
 import org.lightning.quark.core.utils.RowDiffUtils;
 
@@ -56,13 +56,18 @@ public class DifferenceManager {
     public Map<DifferenceType, List<RowDifference>> calcBatchRowDiffs(Map<PKData, RowDataInfo> lefts,
                                                                       Map<PKData, RowDataInfo> rights) {
         Map<DifferenceType, List<RowDifference>> diffs = Maps.newHashMap();
-        for (PKData leftPk : lefts.keySet()) {
+
+        Set<PKData> pks = new HashSet<>(lefts.keySet());
+        pks.addAll(rights.keySet());
+
+        for (PKData leftPk : pks) {
             RowDataInfo left = lefts.get(leftPk);
             RowDataInfo right = rights.get(leftPk);
 
             RowDifference difference = calcRowDiff(left, right);
             diffs.computeIfAbsent(difference.getDiffType(), k -> Lists.newArrayList()).add(difference);
         }
+
 
         return diffs;
     }
