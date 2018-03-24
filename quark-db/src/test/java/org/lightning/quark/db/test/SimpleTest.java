@@ -2,6 +2,7 @@ package org.lightning.quark.db.test;
 
 import com.google.common.collect.Lists;
 
+import java.util.BitSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -43,6 +44,8 @@ public class SimpleTest {
          return hashCode;
          }
          */
+
+        BitSet bitSet = new BitSet();
 
     }
 

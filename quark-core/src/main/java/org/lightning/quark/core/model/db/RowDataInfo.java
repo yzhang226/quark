@@ -16,6 +16,13 @@ public class RowDataInfo {
     private PKData pk;
     private Map<String, Object> row;
 
+    public RowDataInfo() {
+    }
+
+    public RowDataInfo(PKData pk) {
+        this.pk = pk;
+    }
+
     public boolean isEmpty() {
         return row == null || row.isEmpty();
     }

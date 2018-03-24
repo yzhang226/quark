@@ -1,5 +1,6 @@
 package org.lightning.quark.core.utils;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.lightning.quark.core.exception.QuarkAssertException;
 
 /**
@@ -7,8 +8,11 @@ import org.lightning.quark.core.exception.QuarkAssertException;
  */
 public abstract class QuarkAssertor {
 
-    public static void isTrue(boolean expression, String message) {
+    public static void isTrue(boolean expression, String message, Object... args) {
         if (!expression) {
+            if (ArrayUtils.isNotEmpty(args)) {
+                message = String.format(message, args);
+            }
             throw new QuarkAssertException(message);
         }
     }
