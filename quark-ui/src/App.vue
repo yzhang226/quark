@@ -26,7 +26,7 @@ import OffSidebar from './components/layout/OffSidebar'
 export default {
   beforeCreate: function() {
     document.getElementsByTagName("body")[0].className = "hold-transition skin-blue sidebar-mini";
-    console.log('document.getElementsByTagName("body")[0].className is ' + document.getElementsByTagName("body")[0].className);
+    // console.log('document.getElementsByTagName("body")[0].className is ' + document.getElementsByTagName("body")[0].className);
   },
   name: 'App',
   components: {

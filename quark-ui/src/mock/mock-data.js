@@ -37,16 +37,21 @@ function generateData() {
   }
 }
 
+// &currentPageNo=0 404 (Not Found)
 
 Mock.mock(/\/news\/list\?userName=\w+&currentPageNo=\d+/, produceNewsData2);
 
 Mock.mock(/\/news\/list\?currentPageNo=\d+/, produceNewsData);
 
+Mock.mock(/\/news\/list2\?userName=\w+&currentPageNo=\d+/, produceNewsData2);
 
-jQuery.ajax({
-  url: '/news/list?currentPageNo=1',
-}).done(function (data, status, xhr) {
-  let res = JSON.parse(data);
-  console.log("data first is " + JSON.stringify(res.data[0]))
-});
+Mock.mock(/\/news\/list2\?_=\d+&userName=\w+&currentPageNo=\d+/, produceNewsData2);
+
+
+// jQuery.ajax({
+//   url: '/news/list?currentPageNo=1',
+// }).done(function (data, status, xhr) {
+//   let res = JSON.parse(data);
+//   console.log("data first is " + JSON.stringify(res.data[0]))
+// });
 

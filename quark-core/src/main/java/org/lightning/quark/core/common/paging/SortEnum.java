@@ -1,4 +1,4 @@
-package org.lightning.quark.model.common.paging;
+package org.lightning.quark.core.common.paging;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

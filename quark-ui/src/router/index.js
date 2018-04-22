@@ -1,9 +1,32 @@
+
 import Vue from 'vue'
 import Router from 'vue-router'
-import HelloWorld from '../components/HelloWorld'
+
+// 组件
+import DataTable from '../components/table/DataTable'
+import AjaxPagingTable from '../components/table/AjaxPagingTable'
+import Form from '../components/form/Form'
+import VInput from '../components/input/Input'
+import Panel from '../components/panel/Panel'
+import Pagination from '../components/table/Pagination'
+import Content from '../components/content/Content'
+import ContentHeader from '../components/content/ContentHeader'
+
+Vue.component("k-table", DataTable);
+Vue.component("k-ajax-table", AjaxPagingTable);
+Vue.component("k-form", Form);
+Vue.component("k-input", VInput);
+Vue.component("k-panel", Panel);
+Vue.component("k-paging", Pagination);
+
+Vue.component("k-content", Content);
+Vue.component("k-content-header", ContentHeader);
+
+import HelloWorld from '../pages/hello/Index'
 import Bar from '../pages/Bar'
 import Foo from '../pages/Foo'
 import Dashboard from '../components/Dashboard'
+
 
 Vue.use(Router)
 

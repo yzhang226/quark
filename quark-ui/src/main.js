@@ -13,13 +13,18 @@ window.jQuery = $;
 
 Vue.config.productionTip = false;
 
+
+// Vue.component()
+
 let axios = require('axios');
 window.axios = axios;
+
+require('datatables.net-bs/css/dataTables.bootstrap.css');
 
 require('bootstrap/dist/css/bootstrap.css');
 require('font-awesome/css/font-awesome.css');
 require('ionicons/dist/css/ionicons.css');
-require('datatables.net-bs/css/dataTables.bootstrap.css')
+
 require('jvectormap/jquery-jvectormap.css');
 require('admin-lte/dist/css/AdminLTE.css');
 require('admin-lte/dist/css/skins/_all-skins.css');

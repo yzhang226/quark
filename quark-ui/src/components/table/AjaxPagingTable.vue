@@ -1,30 +1,30 @@
 <template>
-  <div>
-    <DataTable :rowData="rowDatax" :header="header" :tableTitle="tableTitle">
 
-      <template slot="paging">
-        <VPagination :totalCount="pagination.totalCount" :pageSize="pagination.pageSize"
-                     :currentPageNo="pagination.currentPageNo"
-                     v-on:changePageSize="changePageSize">
-        </VPagination>
-      </template>
+  <k-panel :title="title" headerBorderEnable="false" footerEnable="false">
 
-    </DataTable>
+    <k-table :rowData="rowData" :header="header" >
+    </k-table>
+    <k-paging :totalCount="pagination.totalCount" :pageSize="pagination.pageSize"
+              :currentPageNo="pagination.currentPageNo"
+              v-on:changePageSize="changePageSize">
+    </k-paging>
 
-  </div>
+  </k-panel>
+
 </template>
 
 <script>
-  import DataTable from './DataTable'
-  import VPagination from "./Pagination"
+  // import p from '../'
+  // import DataTable from './DataTable'
+  // import VPagination from "./Pagination"
 
   export default {
-    name: "AjaxPagingTable",
-    components: {DataTable, VPagination},
-    props: ['remoteUrl', 'header', 'tableTitle', 'queryString'],
+    name: "k-ajax-table",
+    props: ['remoteUrl', 'header', 'title', 'queryString'],
     data: function() {
       return {
-        rowDatax: this.rowDatax,
+        _remoteUrl: this.remoteUrl,
+        rowData: this.rowData,
         pagination: {
           totalCount: 0,
           pageSize: 20,
@@ -33,36 +33,65 @@
       }
     },
     mounted: function () {
-      console.log('a mounted');
+      console.log('AjaxPagingTable mounted');
+      if (!this._remoteUrl && this.remoteUrl) {
+        this._remoteUrl = this.remoteUrl;
+        console.log('set this._remoteUrl is ', this._remoteUrl);
+      }
+      this.fetchAndRender();
+    },
+    beforeMount: function () {
+      console.log('AjaxPagingTable beforeMount');
+
     },
     created: function () {
-      // `this` 指向 vm 实例
       console.log('AjaxPagingTable created');
-
-      this.setRowData();
-
+    },
+    updated: function () {
+      console.log('AjaxPagingTable updated');
+      // this.fetchAndRender();
+    },
+    watch: {
+      remoteUrl: function (value) {
+        console.log('watch remote url start, this._remoteUrl is ', this._remoteUrl);
+        this._remoteUrl = value;
+        this.fetchAndRender();
+        console.log('watch remote url end, this._remoteUrl is ', this._remoteUrl);
+        return value;
+      }
     },
     methods: {
       changePageSize: function(selectedPageSize) {
-        console.log("my changePageSize event selectedPageSize is ", selectedPageSize);
+        console.log("changePageSize event selectedPageSize is ", selectedPageSize);
         this.pagination.currentPageNo = selectedPageSize;
-        this.setRowData();
+        this.fetchAndRender();
       },
       calcRemoteUrl: function() {
-        let _remote = this.remoteUrl;
+        let _remote = this._remoteUrl;
         if (_remote.indexOf('?') < 0) {
           _remote += "?"
         }
 
         if (this.queryString) {
-          _remote += this.queryString;
+          var q = this.queryString;
+          if (q) {
+            _remote += q;
+          }
         }
 
-        _remote += "&currentPageNo=" + this.pagination.currentPageNo;
+        if (_remote.indexOf('=') > -1 && !_remote.endsWith('&')) {
+          _remote += '&';
+        }
+
+        _remote += "currentPageNo=" + this.pagination.currentPageNo;
 
         return _remote;
       },
-      setRowData: function () {
+      fetchAndRender: function () {
+        if (!this._remoteUrl) {
+          console.warn('_remoteUrl is not prepare')
+          return;
+        }
         let that = this;
         let url = this.calcRemoteUrl();
 
@@ -72,19 +101,8 @@
           .then(function (response) {
             let res = response.data;
             let resultData = that.extractData(res);
-            let headerColumns = that.extractHeaderColumns(res);
-
-            let datax = [];
-            for (let i in resultData) {
-              let d = resultData[i];
-              let r = [];
-              for (let j in headerColumns) {
-                r.push({value: d[headerColumns[j].name]});
-              }
-              datax.push(r);
-            }
-            console.log("datax first is " + JSON.stringify(datax[0]))
-            that.rowDatax = datax;
+            console.log("datax first is " + JSON.stringify(resultData[0]))
+            that.rowData = resultData;
             let temp = that.extractPagination(res);
             if (that.pagination.currentPageNo > 0) {
               temp.currentPageNo = that.pagination.currentPageNo;

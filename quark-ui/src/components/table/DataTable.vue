@@ -1,43 +1,58 @@
 <template>
-  <div class="box">
-    <div class="box-header">
-      <h3 class="box-title">{{tableTitle}}</h3>
-    </div>
-    <!-- /.box-header -->
-    <div class="box-body">
+  <div class="dataTables_wrapper form-inline dt-bootstrap">
 
-      <div id="example1_wrapper" class="dataTables_wrapper form-inline dt-bootstrap">
-        <div class="row">
-          <div class="col-sm-12">
-            <table class="table table-bordered table-striped dataTable" role="grid" aria-describedby="example1_info">
-              <thead>
-              <tr>
-                <th v-for="h in header.columns">{{displayHeader(h)}}</th>
-              </tr>
-              </thead>
-              <tbody>
-              <tr v-for="row in rowData">
-                <td v-for="r in row">{{r.value}}</td>
-              </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <slot name="paging"></slot>
-
+    <div class="row">
+      <div class="col-sm-12">
+        <table class="table table-bordered table-striped dataTable" role="grid" >
+          <thead>
+          <tr>
+            <template v-for="h in header.columns" >
+              <th >{{displayHeader(h)}}</th>
+            </template>
+          </tr>
+          </thead>
+          <tbody>
+          <tr v-for="row in _rowData">
+            <template v-for="r in row">
+              <td ><span v-html="r.value"></span></td>
+            </template>
+          </tr>
+          </tbody>
+        </table>
       </div>
-
-
     </div>
-    <!-- /.box-body -->
+
   </div>
 </template>
 
 <script>
   export default {
-    name: "DataTable",
-    props: ['rowData', 'header', 'tableTitle'],
+    name: "k-table",
+    props: ['rowData', 'header'],
+    computed: {
+      _rowData: function () {
+        let destData = [];
+        let rData = this.rowData;
+        let rHeader = this.header.columns;
+        for (let i in rData) {
+          let row = rData[i];
+          let r = [];
+          debugger;
+          for (let j in rHeader) {
+            let cell = {};
+            let rh = rHeader[j];
+            if (rh.isOperate) {
+              cell.value = rh.html;
+            } else {
+              cell.value = row[rh.name];
+            }
+            r.push(cell);
+          }
+          destData.push(r);
+        }
+        return destData;
+      }
+    },
     methods: {
       displayHeader: function (h) {
         if ('displayName' in h) {
@@ -47,6 +62,9 @@
           return h.name;
         }
         return 'N/A';
+      },
+      isOperateCell: function (h) {
+        return h.isOperate === true;
       }
     }
   }

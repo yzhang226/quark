@@ -2,13 +2,15 @@
 
   <div class="row">
     <div class="col-sm-5">
-      <div class="dataTables_info" role="status" aria-live="polite">
+      <div class="dataTables_info align-middle" role="status" aria-live="polite">
         {{entriesMessage}}
       </div>
     </div>
     <div class="col-sm-7">
-      <div class="dataTables_paginate paging_simple_numbers">
-        <ul class="pagination">
+      <!--<div class="dataTables_paginate paging_simple_numbers">-->
+      <div>
+      <!-- pagination no-margin pull-right -->
+        <ul class="pagination no-margin pull-right ">
           <template v-for="i in range(1, totalPageNo)">
             <li v-if="i === 1" :class="currentPageNo === i ? 'paginate_button previous disabled' : 'paginate_button previous'">
               <a href="javascript:void(0);" v-on:click="clickPageSize('pre')" aria-controls="example1" :data-dt-idx="-1" tabindex="0">上一页</a>
@@ -32,7 +34,7 @@
 
 <script>
   export default {
-    name: "VPagination",
+    name: "k-paging",
     props: ['totalCount', 'currentPageNo', 'pageSize'],
     computed: {
 
@@ -100,6 +102,9 @@
         // return Array(end - start + 1).fill().map((_, idx) => start + idx);
       },
       calcPageIndex: function (current, length, displayLength) {
+        if (length === 0) {
+          return [];
+        }
         displayLength = displayLength - 2;
         let indexes = [1];
         let start = Math.round(current - displayLength / 2);
