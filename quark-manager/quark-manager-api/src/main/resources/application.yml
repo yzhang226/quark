@@ -1,0 +1,27 @@
+
+
+endpoints:
+  enabled: false
+
+#logging:
+#  config: classpath:log4j2.xml
+
+server:
+  port: 8787
+
+spring:
+  application:
+    name: quark-manager
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/quark?characterEncoding=UTF-8&useSSL=false&allowMultiQueries=true&nullNamePatternMatchesAll=true
+    username: root
+    password: 6567zhyf
+    pool-size: 30
+
+mybatis:
+  mapper-locations: classpath*:mapper/**/*.xml
+
+pagehelper:
+  helperDialect: mysql
+  reasonable: false

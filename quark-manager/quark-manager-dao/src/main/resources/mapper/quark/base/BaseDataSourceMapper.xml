@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.lightning.quark.manager.dao.daos.quark.DataSourceDao">
+    <resultMap id="BaseResultMap" type="org.lightning.quark.manager.support.model.po.quark.DataSourceBean">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="data_source_type" jdbcType="INTEGER" property="dataSourceType" />
+        <result column="driver_class" jdbcType="VARCHAR" property="driverClass" />
+        <result column="connect_string" jdbcType="VARCHAR" property="connectString" />
+        <result column="user_name" jdbcType="VARCHAR" property="userName" />
+        <result column="password" jdbcType="VARCHAR" property="password" />
+        <result column="create_user" jdbcType="INTEGER" property="createUser" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="update_user" jdbcType="INTEGER" property="updateUser" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+        <result column="connect_properties" javaType="org.lightning.quark.manager.model.dto.quark.ConnectProperties" property="connectProperties" />
+        <result column="pool_properties" javaType="org.lightning.quark.manager.model.dto.quark.ConnectPoolProperties" property="poolProperties" />
+    </resultMap>
+
+    <sql id="BaseColumnList">
+        id, data_source_type, driver_class, connect_string, user_name, password, create_user, create_time, update_user, update_time, connect_properties, pool_properties
+    </sql>
+
+    <sql id="BaseWhereClause">
+        <where>
+            <trim prefix="(" prefixOverrides="and" suffix=")">
+                <if test="id != null">and id = #{id,jdbcType=INTEGER}</if>
+                <if test="dataSourceType != null">and data_source_type = #{dataSourceType,jdbcType=INTEGER}</if>
+                <if test="driverClass != null">and driver_class = #{driverClass,jdbcType=VARCHAR}</if>
+                <if test="connectString != null">and connect_string = #{connectString,jdbcType=VARCHAR}</if>
+                <if test="userName != null">and user_name = #{userName,jdbcType=VARCHAR}</if>
+                <if test="password != null">and password = #{password,jdbcType=VARCHAR}</if>
+                <if test="createUser != null">and create_user = #{createUser,jdbcType=INTEGER}</if>
+                <if test="createTime != null">and create_time = #{createTime,jdbcType=TIMESTAMP}</if>
+                <if test="updateUser != null">and update_user = #{updateUser,jdbcType=INTEGER}</if>
+                <if test="updateTime != null">and update_time = #{updateTime,jdbcType=TIMESTAMP}</if>
+                <if test="connectProperties != null">and connect_properties = #{connectProperties}</if>
+                <if test="poolProperties != null">and pool_properties = #{poolProperties}</if>
+            </trim>
+        </where>
+    </sql>
+
+    <select id="getById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="BaseColumnList" />
+        from k_data_source
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <insert id="save" parameterType="org.lightning.quark.manager.support.model.po.quark.DataSourceBean"
+            keyColumn="id" keyProperty="id" useGeneratedKeys="true">
+        insert into k_data_source
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="dataSourceType != null">data_source_type,</if>
+            <if test="driverClass != null">driver_class,</if>
+            <if test="connectString != null">connect_string,</if>
+            <if test="userName != null">user_name,</if>
+            <if test="password != null">password,</if>
+            <if test="createUser != null">create_user,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateUser != null">update_user,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="connectProperties != null">connect_properties,</if>
+            <if test="poolProperties != null">pool_properties,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id,jdbcType=INTEGER},</if>
+            <if test="dataSourceType != null">#{dataSourceType,jdbcType=INTEGER},</if>
+            <if test="driverClass != null">#{driverClass,jdbcType=VARCHAR},</if>
+            <if test="connectString != null">#{connectString,jdbcType=VARCHAR},</if>
+            <if test="userName != null">#{userName,jdbcType=VARCHAR},</if>
+            <if test="password != null">#{password,jdbcType=VARCHAR},</if>
+            <if test="createUser != null">#{createUser,jdbcType=INTEGER},</if>
+            <if test="createTime != null">#{createTime,jdbcType=TIMESTAMP},</if>
+            <if test="updateUser != null">#{updateUser,jdbcType=INTEGER},</if>
+            <if test="updateTime != null">#{updateTime,jdbcType=TIMESTAMP},</if>
+            <if test="connectProperties != null">#{connectProperties},</if>
+            <if test="poolProperties != null">#{poolProperties},</if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="org.lightning.quark.manager.support.model.po.quark.DataSourceBean">
+        update k_data_source
+        <set>
+            <if test="dataSourceType != null">data_source_type = #{dataSourceType,jdbcType=INTEGER},</if>
+            <if test="driverClass != null">driver_class = #{driverClass,jdbcType=VARCHAR},</if>
+            <if test="connectString != null">connect_string = #{connectString,jdbcType=VARCHAR},</if>
+            <if test="userName != null">user_name = #{userName,jdbcType=VARCHAR},</if>
+            <if test="password != null">password = #{password,jdbcType=VARCHAR},</if>
+            <if test="createUser != null">create_user = #{createUser,jdbcType=INTEGER},</if>
+            <if test="createTime != null">create_time = #{createTime,jdbcType=TIMESTAMP},</if>
+            <if test="updateUser != null">update_user = #{updateUser,jdbcType=INTEGER},</if>
+            <if test="updateTime != null">update_time = #{updateTime,jdbcType=TIMESTAMP},</if>
+            <if test="connectProperties != null">connect_properties = #{connectProperties},</if>
+            <if test="poolProperties != null">pool_properties = #{poolProperties},</if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+
+    <select id="query" resultMap="BaseResultMap" parameterType="map" >
+        select <include refid="BaseColumnList" />
+        from k_data_source
+        <include refid="BaseWhereClause" />
+    </select>
+
+    <select id="count" parameterType="org.lightning.quark.manager.support.model.po.quark.DataSourceBean" resultType="java.lang.Long">
+        select count(*)
+        from k_data_source
+        <if test="_parameter != null">
+            <include refid="BaseWhereClause" />
+        </if>
+    </select>
+
+    <insert id ="batchSave" parameterType="java.util.List" >
+        insert into k_data_source (<include refid="BaseColumnList" />)
+        values
+        <foreach collection ="list" item="ro" index="index" separator =",">
+            <trim prefix="(" suffix=")" suffixOverrides=",">
+        #{ro.id},#{ro.dataSourceType},#{ro.driverClass},#{ro.connectString},#{ro.userName},#{ro.password},#{ro.createUser},#{ro.createTime},#{ro.updateUser},#{ro.updateTime},#{ro.connectProperties},#{ro.poolProperties},
+            </trim>
+        </foreach>
+    </insert>
+
+</mapper>

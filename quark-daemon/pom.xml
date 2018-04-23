@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.lightning.quark</groupId>
+        <artifactId>quark</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <groupId>org.lightning.quark</groupId>
+    <artifactId>quark-daemon</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <name>quark-daemon</name>
+    <url>http://maven.apache.org</url>
+
+    <properties>
+
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+
+
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+
+
+        </plugins>
+    </build>
+
+
+    <modules>
+        <module>quark-chase</module>
+        <module>quark-test</module>
+        <module>quark-db</module>
+        <module>quark-db-plugin-mysql</module>
+        <module>quark-db-plugin-mssql</module>
+    </modules>
+
+</project>

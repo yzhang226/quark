@@ -37,23 +37,23 @@ public class DataResult<T> {
         return ok("ok", null);
     }
 
-    public static <T> DataResult ok(T data) {
+    public static <T> DataResult<T> ok(T data) {
         return ok("ok", data);
     }
 
-    public static <T> DataResult ok(String msg, T data) {
+    public static <T> DataResult<T> ok(String msg, T data) {
         return new DataResult<>(0, msg, data);
     }
 
     public static DataResult fail() {
-        return fail("fail");
+        return fail("fail", null);
     }
 
     public static DataResult fail(String msg) {
-        return fail(msg, new Object());
+        return fail(msg, null);
     }
 
-    public static <T> DataResult fail(String msg, T data) {
+    public static <T> DataResult<T> fail(String msg, T data) {
         return new DataResult<>(1000, msg, data);
     }
 

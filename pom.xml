@@ -26,10 +26,10 @@
         <guava.version>24.0-jre</guava.version>
         <mysql.version>6.0.6</mysql.version>
         <jackson.version>2.9.2</jackson.version>
-        <mybatis.version>3.4.4</mybatis.version>
-        <mybatis.spring.version>1.3.0</mybatis.spring.version>
-        <mybatis.typehandlers>1.0.2</mybatis.typehandlers>
+
         <spring.version>5.0.5.RELEASE</spring.version>
+
+        <cglib.version>3.2.6</cglib.version>
     </properties>
 
     <dependencyManagement>
@@ -69,11 +69,6 @@
             </dependency>
             <dependency>
                 <groupId>org.lightning.quark</groupId>
-                <artifactId>quark-model</artifactId>
-                <version>${quark.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.lightning.quark</groupId>
                 <artifactId>quark-db</artifactId>
                 <version>1.0-SNAPSHOT</version>
                 <type>test-jar</type>
@@ -98,11 +93,6 @@
             <dependency>
                 <groupId>org.lightning.quark</groupId>
                 <artifactId>quark-manager-service</artifactId>
-                <version>${quark.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.lightning.quark</groupId>
-                <artifactId>quark-manager-web</artifactId>
                 <version>${quark.version}</version>
             </dependency>
 
@@ -270,27 +260,14 @@
                 <version>${jackson.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>cglib</groupId>
+                <artifactId>cglib</artifactId>
+                <version>${cglib.version}</version>
+            </dependency>
 
-            <dependency>
-                <groupId>org.mybatis</groupId>
-                <artifactId>mybatis-typehandlers-jsr310</artifactId>
-                <version>${mybatis.typehandlers}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.mybatis</groupId>
-                <artifactId>mybatis-spring</artifactId>
-                <version>${mybatis.spring.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.mybatis</groupId>
-                <artifactId>mybatis</artifactId>
-                <version>${mybatis.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.github.pagehelper</groupId>
-                <artifactId>pagehelper</artifactId>
-                <version>5.0.4</version>
-            </dependency>
+
+
 
         </dependencies>
     </dependencyManagement>
@@ -349,22 +326,10 @@
         </plugins>
     </build>
 
-
     <modules>
-        <module>quark-metadata</module>
-        <module>quark-api</module>
-        <module>quark-chase</module>
         <module>quark-core</module>
-        <module>quark-test</module>
-        <module>quark-db</module>
-        <module>quark-db-plugin-mysql</module>
-        <module>quark-db-plugin-mssql</module>
-        <module>quark-model</module>
-        <module>quark-manager-dao</module>
-        <module>quark-manager-service</module>
-        <module>quark-manager-web</module>
-        <module>quark-manager-support</module>
-        <module>quark-manager-model</module>
+        <module>quark-daemon</module>
+        <module>quark-manager</module>
     </modules>
 
 </project>
