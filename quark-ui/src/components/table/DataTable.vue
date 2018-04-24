@@ -31,6 +31,7 @@
     props: ['rowData', 'header'],
     computed: {
       _rowData: function () {
+        debugger;
         let destData = [];
         let rData = this.rowData;
         let rHeader = this.header.columns;

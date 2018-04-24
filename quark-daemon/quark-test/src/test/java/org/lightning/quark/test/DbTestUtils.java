@@ -19,8 +19,8 @@ public abstract class DbTestUtils {
         DataSourceParam param = new DataSourceParam();
         param.setDriverClassName("com.mysql.jdbc.Driver");
         param.setUrl("jdbc:mysql://127.0.0.1:3306/" + dbName + "?characterEncoding=UTF-8&useSSL=false&allowMultiQueries=true&nullNamePatternMatchesAll=true");
-        param.setUsername("root");
-        param.setPassword("6567zhyf");
+        param.setUsername("app");
+        param.setPassword("app123456");
         param.setMaxTotal(16);
         param.setMaxWaitMillis(2 * 1000L);
         return param;

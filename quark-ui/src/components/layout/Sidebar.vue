@@ -34,9 +34,9 @@
           <!-- 使用 router-link 组件来导航. -->
           <!-- 通过传入 `to` 属性指定链接. -->
           <!-- <router-link> 默认会被渲染成一个 `<a>` 标签 -->
-          <router-link to="/foo" >Go to Foo</router-link>
-          <router-link to="/bar">Go to Bar</router-link>
-          <router-link to="/hello" >Go to Hello</router-link>
+          <router-link to="/data_source" >数据源管理</router-link>
+          <router-link to="/hello" >Hello Demo</router-link>
+
 
         </li>
 
@@ -48,6 +48,6 @@
 
 <script>
 export default {
-  name: 'sidebar'
+  name: 'k-page-sidebar'
 }
 </script>

@@ -68,7 +68,7 @@ public class DataSourceController {
      * @return 分页结果集
      */
     @ApiOperation(value = "FindDataSourceByPage", httpMethod = "POST", response = DataResult.class, notes = "分页查询")
-    @RequestMapping(value = "/page", method = RequestMethod.POST)
+    @RequestMapping(value = "/page", method = {RequestMethod.POST})
     public DataResult<PagingResponse<DataSourceModel>> findByPage(@RequestBody PagingRequest<DataSourceModel> page) {
         PagingResponse<DataSourceBean> resp = dataSourceService.findBeans(page);
         return DataResult.ok(resp.convert(DataSourceModel.class));

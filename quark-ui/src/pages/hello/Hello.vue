@@ -5,7 +5,7 @@
     <div class="row">
       <div class="col-md-12 col-sm-6 col-xs-12">
 
-        <k-form :formTitle="testFormTitle">
+        <k-form title="测试DEMO2">
           <div class="row">
             <k-input blockClass="col-md-12" type="email" placeholder="Email" name="test" eleClass="form-control" id="test-id" label="My Input"></k-input>
             <k-input blockClass="col-md-12" type="email" placeholder="Email" name="test" eleClass="form-control" id="test-id" label="My Input"></k-input>

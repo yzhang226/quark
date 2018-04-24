@@ -2,7 +2,7 @@
   <div>
     <div class="box box-primary">
       <div class="box-header with-border">
-        <h3 class="box-title">{{formTitle}}</h3>
+        <h3 class="box-title">{{title || '表单'}}</h3>
       </div>
       <!-- /.box-header -->
       <!-- form start -->
@@ -17,8 +17,8 @@
 
 <script>
   export default {
-    name: "Form",
-    props: ['formTitle']
+    name: "k-form",
+    props: ['title']
 
   }
 </script>

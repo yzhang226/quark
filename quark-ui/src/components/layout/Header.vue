@@ -270,6 +270,6 @@
 
 <script>
 export default {
-  name: 'top-header'
+  name: 'k-page-header'
 }
 </script>

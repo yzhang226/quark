@@ -10,6 +10,6 @@
 
 <script>
 export default {
-  name: 'bottom-footer'
+  name: 'k-page-footer'
 }
 </script>

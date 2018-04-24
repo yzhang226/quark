@@ -14,9 +14,9 @@ spring:
     name: quark-manager
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:3306/quark?characterEncoding=UTF-8&useSSL=false&allowMultiQueries=true&nullNamePatternMatchesAll=true
-    username: root
-    password: 6567zhyf
+    url: jdbc:mysql://127.0.0.1:3306/quark?characterEncoding=UTF-8&useSSL=false&allowMultiQueries=true
+    username: app
+    password: app123456
     pool-size: 30
 
 mybatis:
@@ -25,3 +25,4 @@ mybatis:
 pagehelper:
   helperDialect: mysql
   reasonable: false
+

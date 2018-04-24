@@ -20,7 +20,17 @@
 
   export default {
     name: "k-ajax-table",
-    props: ['remoteUrl', 'header', 'title', 'queryString'],
+    props: {
+      remoteUrl: String,
+      header: Object,
+      title: String,
+      queryJson: Object,
+      actionMethod: {
+        type: String,
+        default: 'POST'
+      }
+    },
+      // ['remoteUrl', 'header', 'title', 'queryString'],
     data: function() {
       return {
         _remoteUrl: this.remoteUrl,
@@ -66,16 +76,27 @@
         this.pagination.currentPageNo = selectedPageSize;
         this.fetchAndRender();
       },
+      pagingRequestData: function () {
+        return {
+          pageNo: this.pagination.currentPageNo,
+          pageSize: this.pagination.pageSize,
+          criteria: this.queryJson
+        };
+      },
       calcRemoteUrl: function() {
         let _remote = this._remoteUrl;
         if (_remote.indexOf('?') < 0) {
           _remote += "?"
         }
 
-        if (this.queryString) {
-          var q = this.queryString;
+        if (this.queryJson) {
+          var q = this.queryJson;
           if (q) {
-            _remote += q;
+            var queryString = '';
+            for (var key in q) {
+              queryString += key + '=' + q[key];
+            }
+            _remote += queryString;
           }
         }
 
@@ -97,23 +118,46 @@
 
         console.log("paging ajax url is " + url);
 
-        axios.get(url)
-          .then(function (response) {
-            let res = response.data;
-            let resultData = that.extractData(res);
-            console.log("datax first is " + JSON.stringify(resultData[0]))
-            that.rowData = resultData;
-            let temp = that.extractPagination(res);
-            if (that.pagination.currentPageNo > 0) {
-              temp.currentPageNo = that.pagination.currentPageNo;
-            }
+        if (this.actionMethod == 'POST') {
+          // window.axios.ajax()
+          var data = {};
+          window.axios.post();
+          axios.post(url, this.pagingRequestData())
+            .then(function (response) {
+              that.ajaxFinish(that, response);
+            })
+            .catch(function (error) {
+              that.ajaxError(error);
+            });
+        } else {
+          axios.get(url)
+            .then(function (response) {
+              that.ajaxFinish(that, response);
+            })
+            .catch(function (error) {
+              that.ajaxError(error);
+            });
+        }
 
-            that.pagination = temp;
-          })
-          .catch(function (error) {
-            console.log("error {}", error)
-          });
+      },
+      ajaxError: function (error) {
+        console.log("error {}", error)
+      },
+      ajaxFinish: function (that, response) {
+        debugger;
+        let res = response.data.data;
+        let resultData = that.extractData(res);
+        if (resultData && resultData.length > 0) {
+          console.log("datax first is " + JSON.stringify(resultData[0]));
+        }
 
+        that.rowData = resultData;
+        let temp = that.extractPagination(res);
+        if (that.pagination.currentPageNo > 0) {
+          temp.currentPageNo = that.pagination.currentPageNo;
+        }
+
+        that.pagination = temp;
       },
       extractData: function (result) {
         return result.data;

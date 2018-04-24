@@ -191,6 +191,6 @@
 
 <script>
 export default {
-  name: 'off-sidebar'
+  name: 'k-page-off-sidebar'
 }
 </script>
