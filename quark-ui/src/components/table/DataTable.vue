@@ -31,14 +31,14 @@
     props: ['rowData', 'header'],
     computed: {
       _rowData: function () {
-        debugger;
+        // debugger;
         let destData = [];
         let rData = this.rowData;
         let rHeader = this.header.columns;
         for (let i in rData) {
           let row = rData[i];
           let r = [];
-          debugger;
+          // debugger;
           for (let j in rHeader) {
             let cell = {};
             let rh = rHeader[j];

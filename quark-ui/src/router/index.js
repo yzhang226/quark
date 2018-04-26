@@ -13,6 +13,8 @@ import Pagination from '../components/table/Pagination'
 import Content from '../components/content/Content'
 import ContentHeader from '../components/content/ContentHeader'
 
+import Modal from '../components/modal/Modal'
+
 import Header from '../components/layout/Header'
 import Footer from '../components/layout/Footer'
 import OffSidebar from '../components/layout/OffSidebar'
@@ -34,15 +36,19 @@ Vue.component("k-paging", Pagination);
 Vue.component("k-content", Content);
 Vue.component("k-content-header", ContentHeader);
 
+Vue.component("k-model", Modal);
+
+
+
 import HelloWorld from '../pages/hello/Hello'
 import Bar from '../pages/Bar'
 import Foo from '../pages/Foo'
 import Dashboard from '../components/Dashboard'
 
-import DataSourceIndex from '../pages/datasource/DataSource'
+import DataSource from '../pages/datasource/DataSource'
 
 
-Vue.use(Router)
+Vue.use(Router);
 
 // 0. 如果使用模块化机制编程，导入Vue和VueRouter，要调用 Vue.use(VueRouter)
 
@@ -68,7 +74,7 @@ const routes = [
   {
     path: '/data_source',
     name: 'DataSource',
-    component: DataSourceIndex
+    component: DataSource
   }
 ]
 

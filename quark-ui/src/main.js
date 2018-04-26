@@ -15,11 +15,10 @@ Vue.config.productionTip = false;
 
 
 // Vue.component()
-
-let axios = require('axios');
+import axios from 'axios';
+// let axios = require('axios');
 window.axios = axios;
 // import axios from 'axios'
-//Vue.use(axios)
 Vue.prototype.$http = axios;
 
 require('datatables.net-bs/css/dataTables.bootstrap.css');

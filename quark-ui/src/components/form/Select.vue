@@ -3,8 +3,8 @@
     <div class="form-group">
       <label :class="['control-label', labelPlaceClass]">{{label}}</label>
       <div :class="(selectPlaceClass)">
-        <!--   -->
-        <select :value="selected" :class="['form-control', selectClass]" :name="name" :id="id" :disabled="readonly"
+        <!--  :value="selected" -->
+        <select  :class="['form-control', selectClass]" :name="name" :id="id" :disabled="readonly"
                 @change="emitChange($event.target.value)">
           <template v-for="o in selectData">
             <option :value="o.value" :selected="calcSelected(o)">{{o.text}}</option>
@@ -18,6 +18,13 @@
 </template>
 
 <script>
+  /**
+   *
+   selected: {
+          type: [String,Number]
+        },
+   value: String
+   */
   export default {
     name: "k-select",
     model: {
@@ -39,10 +46,7 @@
         labelSm: {
           type: [String, Number]
         },
-        selected: {
-          type: [String,Number]
-        },
-        value: String
+
       },
 
     // ['blockClass', 'label', 'name', 'id', 'optionData', 'selectClass', 'labelSm'],

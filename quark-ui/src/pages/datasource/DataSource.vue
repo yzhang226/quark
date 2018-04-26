@@ -17,7 +17,7 @@
           <div class="box-footer">
             <span>name: {{queryModel.userName}}</span>
             <span>type: {{queryModel.dataSourceType}}</span>
-            <button type="button" class="btn btn-primary" v-on:click="addDataSource">查询</button>
+            <button type="button" class="btn btn-primary" v-on:click="openAddPage">新增</button>
             <button type="button" class="btn btn-primary" v-on:click="doQuery">查询</button>
           </div>
         </k-form>
@@ -29,16 +29,31 @@
       <!-- /.col -->
     </div>
 
+    <!-- TODO: 应该有更优雅的实现 -->
+    <k-model v-model="addPageVisible" modalSize="large" title="新增数据源" confirm-text="保存">
+      <div class="row">
+        <k-input v-model="addModel.userName" type="text" placeholder="用户名" name="userName" label="用户名:" labelSm="3"></k-input>
+        <k-select v-model="addModel.dataSourceType" name="dataSourceType" label="数据源类型"
+                  :selectData="dataSourceTypes" labelSm="3"></k-select>
+      </div>
+
+    </k-model>
+
   </k-content>
 
 </template>
 
 <script>
   export default {
-    name: "DataSourceIndex",
+    name: "DataSource",
 
     data: function() {
       return {
+        addPageVisible: false,
+        addModel: {
+          userName: null,
+          dataSourceType: 10
+        },
         queryModel: {
           userName: null,
           dataSourceType: 10
@@ -67,8 +82,8 @@
       }
     },
     methods: {
-      addDataSource: function() {
-
+      openAddPage: function() {
+        this.addPageVisible = true;
       },
       getQueryUrl: function() {
         let u = this.remoteUrl;

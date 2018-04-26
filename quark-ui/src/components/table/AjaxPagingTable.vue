@@ -144,7 +144,7 @@
         console.log("error {}", error)
       },
       ajaxFinish: function (that, response) {
-        debugger;
+        // debugger;
         let res = response.data.data;
         let resultData = that.extractData(res);
         if (resultData && resultData.length > 0) {
