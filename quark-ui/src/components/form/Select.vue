@@ -45,7 +45,7 @@
         selectClass: String,
         labelSm: {
           type: [String, Number]
-        },
+        }
 
       },
 

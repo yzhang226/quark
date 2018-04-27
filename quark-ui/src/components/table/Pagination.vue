@@ -53,7 +53,7 @@
         if ((this.totalCount % this.pageSize) >= 1) {
           totPage++;
         }
-        console.log("totPage is ", totPage);
+        // console.log("totPage is ", totPage);
         return totPage;
       },
       _currentPageNo: function () {

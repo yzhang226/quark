@@ -43,7 +43,7 @@
       }
     },
     mounted: function () {
-      console.log('AjaxPagingTable mounted');
+      // console.log('AjaxPagingTable mounted');
       if (!this._remoteUrl && this.remoteUrl) {
         this._remoteUrl = this.remoteUrl;
         console.log('set this._remoteUrl is ', this._remoteUrl);
@@ -51,28 +51,28 @@
       this.fetchAndRender();
     },
     beforeMount: function () {
-      console.log('AjaxPagingTable beforeMount');
+      // console.log('AjaxPagingTable beforeMount');
 
     },
     created: function () {
-      console.log('AjaxPagingTable created');
+      // console.log('AjaxPagingTable created');
     },
     updated: function () {
-      console.log('AjaxPagingTable updated');
+      // console.log('AjaxPagingTable updated');
       // this.fetchAndRender();
     },
     watch: {
       remoteUrl: function (value) {
-        console.log('watch remote url start, this._remoteUrl is ', this._remoteUrl);
+        // console.log('watch remote url start, this._remoteUrl is ', this._remoteUrl);
         this._remoteUrl = value;
         this.fetchAndRender();
-        console.log('watch remote url end, this._remoteUrl is ', this._remoteUrl);
+        // console.log('watch remote url end, this._remoteUrl is ', this._remoteUrl);
         return value;
       }
     },
     methods: {
       changePageSize: function(selectedPageSize) {
-        console.log("changePageSize event selectedPageSize is ", selectedPageSize);
+        // console.log("changePageSize event selectedPageSize is ", selectedPageSize);
         this.pagination.currentPageNo = selectedPageSize;
         this.fetchAndRender();
       },
@@ -121,7 +121,7 @@
         if (this.actionMethod == 'POST') {
           // window.axios.ajax()
           var data = {};
-          window.axios.post();
+          // window.axios.post();
           axios.post(url, this.pagingRequestData())
             .then(function (response) {
               that.ajaxFinish(that, response);
@@ -148,7 +148,7 @@
         let res = response.data.data;
         let resultData = that.extractData(res);
         if (resultData && resultData.length > 0) {
-          console.log("datax first is " + JSON.stringify(resultData[0]));
+          // console.log("datax first is " + JSON.stringify(resultData[0]));
         }
 
         that.rowData = resultData;

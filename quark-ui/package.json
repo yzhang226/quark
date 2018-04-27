@@ -45,6 +45,7 @@
     "raphael": "^2.2.7",
     "select2": "^4.0.3",
     "slimscroll": "^0.9.1",
+    "sweetalert2": "^7.19.1",
     "vue": "^2.5.2",
     "vue-router": "^3.0.1"
   },

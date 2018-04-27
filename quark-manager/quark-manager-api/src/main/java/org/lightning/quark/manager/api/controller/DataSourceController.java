@@ -48,6 +48,9 @@ public class DataSourceController {
     @ApiOperation(value = "AddDataSource", httpMethod = "POST", response = DataResult.class, notes = "新增DataSource")
     @RequestMapping(value = "", method = RequestMethod.PUT)
     public DataResult<Integer> add(@RequestBody DataSourceModel dataSource) {
+        if (dataSource.getCreateUser() == null) {
+            dataSource.setCreateUser(0);
+        }
         return DataResult.ok(dataSourceService.save(Q.copy(dataSource, DataSourceBean.class)));
     }
 

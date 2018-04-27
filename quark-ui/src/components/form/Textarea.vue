@@ -4,8 +4,8 @@
     <div class="form-group">
       <label :for="id" :class="['control-label', labelPlaceClass]">{{label}}</label>
       <div :class="placeClass">
-        <input :type="type" :class='eleClass || "form-control"' :name="name" :id="id" :placeholder="placeholder"
-                @input="emitChange($event.target.value)" :value="inputValue">
+        <textarea :type="type" :class='eleClass || "form-control"' :name="name" :id="id" :placeholder="placeholder"
+                  @input="emitChange($event.target.value)" :value="inputValue"></textarea>
       </div>
     </div>
   </div>
@@ -14,7 +14,7 @@
 
 <script>
   export default {
-    name: "k-input",
+    name: "k-textarea",
     model: {
       prop: 'inputValue',
       event: 'change'

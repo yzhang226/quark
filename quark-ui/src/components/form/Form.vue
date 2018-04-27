@@ -1,25 +1,35 @@
 <template>
-  <div>
-    <div class="box box-primary">
-      <div class="box-header with-border">
-        <h3 class="box-title">{{title || '表单'}}</h3>
-      </div>
-      <!-- /.box-header -->
-      <!-- form start -->
-      <form role="form" class="form-horizontal">
-        <div class="box-body">
-        <slot></slot>
-        </div>
-      </form>
-    </div>
-  </div>
+
+  <form role="form" :id="id" ref="_innerForm" :class="(eleClass || 'form-horizontal')">
+    <slot></slot>
+  </form>
+
+  <!--<div>-->
+    <!--&lt;!&ndash; box-primary  &ndash;&gt;-->
+    <!--<div :class="[(boxClass || 'box box-primary')]">-->
+      <!--<div class="box-header with-border">-->
+        <!--<h3 class="box-title">{{title || ''}}</h3>-->
+      <!--</div>-->
+      <!--&lt;!&ndash; /.box-header &ndash;&gt;-->
+      <!--&lt;!&ndash; form start &ndash;&gt;-->
+      <!---->
+    <!--</div>-->
+  <!--</div>-->
 </template>
 
 <script>
+  // this.$refs.h1ele.style.color = 'red';// 修改html样式
   export default {
     name: "k-form",
-    props: ['title']
+    props: ['title', 'eleClass', 'id'],
+    computed: {
 
+    },
+    methods: {
+      reset: function () {
+        this.$refs._innerForm.reset();
+      }
+    }
   }
 </script>
 

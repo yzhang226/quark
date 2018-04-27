@@ -8,6 +8,7 @@ import AjaxPagingTable from '../components/table/AjaxPagingTable'
 import Form from '../components/form/Form'
 import Input from '../components/form/Input'
 import Select from '../components/form/Select'
+import Textarea from '../components/form/Textarea'
 import Panel from '../components/panel/Panel'
 import Pagination from '../components/table/Pagination'
 import Content from '../components/content/Content'
@@ -30,6 +31,7 @@ Vue.component("k-ajax-table", AjaxPagingTable);
 Vue.component("k-form", Form);
 Vue.component("k-input", Input);
 Vue.component("k-select", Select);
+Vue.component("k-textarea", Textarea);
 Vue.component("k-panel", Panel);
 Vue.component("k-paging", Pagination);
 

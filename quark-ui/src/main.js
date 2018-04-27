@@ -21,6 +21,9 @@ window.axios = axios;
 // import axios from 'axios'
 Vue.prototype.$http = axios;
 
+import Swal from 'sweetalert2'
+window.Swal = Swal;
+
 require('datatables.net-bs/css/dataTables.bootstrap.css');
 
 require('bootstrap/dist/css/bootstrap.css');
@@ -71,6 +74,8 @@ require('chart.js/Chart.js');
 // require('admin-lte/dist/js/pages/dashboard2.js')
 // require('admin-lte/dist/js/demo.js')
 require('./plugins/adminlte/demo');
+
+
 
 require('./mock/mock-data');
 

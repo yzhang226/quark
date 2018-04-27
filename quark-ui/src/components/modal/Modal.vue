@@ -13,7 +13,7 @@
           <slot></slot>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-default pull-left" @click="doClose" data-dismiss="modal">{{closeText||'取消'}}</button>
+          <button type="button" class="btn btn-default pull-left" @click="doCancel" data-dismiss="modal">{{closeText||'取消'}}</button>
           <button type="button" class="btn btn-primary" @click="doConfirm">{{confirmText||'确定'}}</button>
         </div>
       </div>
@@ -35,6 +35,9 @@
       title: String,
       closeText: String,
       confirmText: String,
+      confirmCallback: Function,
+      cancelCallback: Function,
+      closeCallback: Function,
       visible: {
         type: Boolean,
         default: false
@@ -73,7 +76,6 @@
     },
     methods: {
       setCalcVisibleClass: function (value) {
-        console.log("value is " + value + (typeof value));
         this._visible = value;
         if (this._visible === true) {
           this.visibleClass = __visibleShow;
@@ -81,16 +83,30 @@
           this.visibleClass = __visibleHide;
         }
       },
-      doClose: function () {
-        console.log("doClose...");
+      _doClose: function () {
         this.setCalcVisibleClass(false);
         this.emitChange(false);
       },
+      doClose: function () {
+        if (this.closeCallback) {
+          this.closeCallback();
+        }
+        this._doClose();
+      },
+      doCancel: function () {
+        if (this.cancelCallback) {
+          this.cancelCallback();
+        }
+        this._doClose();
+      },
       doConfirm: function () {
-        this.doClose();
+        if (this.confirmCallback) {
+          this.confirmCallback();
+        }
+        this._doClose();
       },
       emitChange: function (val) {
-        console.log("emit change val is " + val + (typeof val));
+        // console.log("emit change val is " + val + (typeof val));
         this.$emit('change', val)
       }
     }
