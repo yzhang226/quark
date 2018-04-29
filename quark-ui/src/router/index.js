@@ -20,6 +20,7 @@ import Header from '../components/layout/Header'
 import Footer from '../components/layout/Footer'
 import OffSidebar from '../components/layout/OffSidebar'
 import Sidebar from '../components/layout/Sidebar'
+import Checkbox from '../components/form/CheckBox'
 
 Vue.component("k-page-header", Header);
 Vue.component("k-page-footer", Footer);
@@ -28,10 +29,13 @@ Vue.component("k-page-sidebar", Sidebar);
 
 Vue.component("k-table", DataTable);
 Vue.component("k-ajax-table", AjaxPagingTable);
+
 Vue.component("k-form", Form);
 Vue.component("k-input", Input);
 Vue.component("k-select", Select);
 Vue.component("k-textarea", Textarea);
+Vue.component('k-checkbox', Checkbox)
+
 Vue.component("k-panel", Panel);
 Vue.component("k-paging", Pagination);
 

@@ -2,7 +2,7 @@
 
   <k-panel :title="title" headerBorderEnable="false" footerEnable="false">
 
-    <k-table :rowData="rowData" :header="header" >
+    <k-table :rowData="rowData" :header="header" ref="kTable" :checkedValues.sync="selectedValues">
     </k-table>
     <k-paging :totalCount="pagination.totalCount" :pageSize="pagination.pageSize"
               :currentPageNo="pagination.currentPageNo"
@@ -21,6 +21,7 @@
   export default {
     name: "k-ajax-table",
     props: {
+      checkedValues: Array,
       remoteUrl: String,
       header: Object,
       title: String,
@@ -30,10 +31,11 @@
         default: 'POST'
       }
     },
-      // ['remoteUrl', 'header', 'title', 'queryString'],
     data: function() {
       return {
-        _remoteUrl: this.remoteUrl,
+        // _checkedValues: this.checkedValues,
+        selectedValues: null,
+        remoteAjaxUrl: this.remoteUrl,
         rowData: this.rowData,
         pagination: {
           totalCount: 0,
@@ -44,9 +46,9 @@
     },
     mounted: function () {
       // console.log('AjaxPagingTable mounted');
-      if (!this._remoteUrl && this.remoteUrl) {
-        this._remoteUrl = this.remoteUrl;
-        console.log('set this._remoteUrl is ', this._remoteUrl);
+      if (!this.remoteAjaxUrl && this.remoteUrl) {
+        this.remoteAjaxUrl = this.remoteUrl;
+        console.log('set this._remoteUrl is ', this.remoteAjaxUrl);
       }
       this.fetchAndRender();
     },
@@ -61,16 +63,26 @@
       // console.log('AjaxPagingTable updated');
       // this.fetchAndRender();
     },
+    computed: {
+
+    },
     watch: {
+      selectedValues: function (value) {
+        // console.log("this.$emit('update:checkedValues', value)", value);
+        this.$emit('update:checkedValues', value);
+      },
       remoteUrl: function (value) {
         // console.log('watch remote url start, this._remoteUrl is ', this._remoteUrl);
-        this._remoteUrl = value;
+        this.remoteAjaxUrl = value;
         this.fetchAndRender();
         // console.log('watch remote url end, this._remoteUrl is ', this._remoteUrl);
         return value;
       }
     },
     methods: {
+      getCheckedValues: function () {
+        return this.$refs.kTable.checkedBoxs;
+      },
       changePageSize: function(selectedPageSize) {
         // console.log("changePageSize event selectedPageSize is ", selectedPageSize);
         this.pagination.currentPageNo = selectedPageSize;
@@ -84,7 +96,7 @@
         };
       },
       calcRemoteUrl: function() {
-        let _remote = this._remoteUrl;
+        let _remote = this.remoteAjaxUrl;
         if (_remote.indexOf('?') < 0) {
           _remote += "?"
         }
@@ -109,7 +121,7 @@
         return _remote;
       },
       fetchAndRender: function () {
-        if (!this._remoteUrl) {
+        if (!this.remoteAjaxUrl) {
           console.warn('_remoteUrl is not prepare')
           return;
         }

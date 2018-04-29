@@ -4,7 +4,7 @@
     <div :class="['modal-dialog', modelSizeClass]">
       <div class="modal-content">
         <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close" @click="doClose">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close" @click="close">
             <span aria-hidden="true">×</span>
           </button>
           <h4 class="modal-title"><span v-html="(title || '框')"></span></h4>
@@ -12,10 +12,12 @@
         <div class="modal-body">
           <slot></slot>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default pull-left" @click="doCancel" data-dismiss="modal">{{closeText||'取消'}}</button>
-          <button type="button" class="btn btn-primary" @click="doConfirm">{{confirmText||'确定'}}</button>
-        </div>
+        <slot name="footer">
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default pull-left" @click="cancel" data-dismiss="modal">{{closeText||'取消'}}</button>
+            <button type="button" class="btn btn-primary" @click="confirm">{{confirmText||'确定'}}</button>
+          </div>
+        </slot>
       </div>
       <!-- /.modal-content -->
     </div>
@@ -25,6 +27,7 @@
 </template>
 
 <script>
+  // TODO: 应该有更优雅的实现, 目前使用v-model实现双向绑定
 
   let __visibleHide = "display: none;";
   let __visibleShow = "display: block; padding-right: 15px;";
@@ -87,19 +90,19 @@
         this.setCalcVisibleClass(false);
         this.emitChange(false);
       },
-      doClose: function () {
+      close: function () {
         if (this.closeCallback) {
           this.closeCallback();
         }
         this._doClose();
       },
-      doCancel: function () {
+      cancel: function () {
         if (this.cancelCallback) {
           this.cancelCallback();
         }
         this._doClose();
       },
-      doConfirm: function () {
+      confirm: function () {
         if (this.confirmCallback) {
           this.confirmCallback();
         }
