@@ -25,6 +25,7 @@
             <span>myBoxs: {{myBoxs}} {{myBoxs2}}</span>
             <span>name: {{queryModel.userName}}</span>
             <span>type: {{queryModel.dataSourceType}}</span>
+            <button type="button" class="btn btn-info" @click="openEditPage">编辑</button>
             <button type="button" class="btn btn-primary" @click="openAddPage">新增</button>
             <button type="button" class="btn btn-primary" @click="doQuery">查询</button>
           </div>
@@ -39,8 +40,8 @@
     </div>
 
 
-    <k-model v-model="addPageVisible" modalSize="large" title="新增数据源" confirm-text="保存"
-             :confirmCallback="doSaveDataSource">
+    <k-modal v-model="addPageVisible" modalSize="large" title="新增数据源" confirm-text="保存"
+             :confirmCallback="doSaveDataSource" ref="addModal">
       <k-form id="addForm" ref="addFormRef">
 
         <div class="row">
@@ -53,6 +54,12 @@
         <div class="row">
           <k-input v-model="addModel.userName" type="text" placeholder="用户名" id="userName1" label="用户名:"
                    labelSm="3"></k-input>
+
+          <span class="form-group__message" v-if="!$v.addModel.userName.required">userName is required</span>
+          <span class="form-group__message" v-if="!$v.addModel.userName.minLength">userName must have at least {{$v.addModel.userName.$params.minLength.min}} letters.</span>
+
+          <!--<pre>name: {{ $v.addModel }}</pre>-->
+
           <k-input v-model="addModel.password" type="password" placeholder="密码" id="password1" label="密码:"
                    labelSm="3"></k-input>
         </div>
@@ -64,10 +71,10 @@
                       label="连接池配置:" labelSm="3"></k-textarea>
         </div>
       </k-form>
-    </k-model>
+    </k-modal>
 
-    <k-model v-model="editPageVisible" modalSize="large" title="新增数据源" confirm-text="保存"
-             :confirmCallback="doEditDataSource">
+    <k-modal v-model="editPageVisible" modalSize="large" title="编辑数据源" confirm-text="保存"
+             :confirmCallback="doEditDataSource" ref="editModal">
       <k-form ref="editFormRef">
 
         <div class="row">
@@ -91,13 +98,18 @@
                       label="连接池配置:" labelSm="3"></k-textarea>
         </div>
       </k-form>
-    </k-model>
+    </k-modal>
 
   </k-content>
 
 </template>
 
 <script>
+  // import Vue from 'vue'
+  // import Vuelidate from 'vuelidate'
+  // Vue.use(Vuelidate);
+  // import { required, minLength, between } from 'vuelidate/lib/validators'
+
   export default {
     name: "DataSource",
 
@@ -138,6 +150,9 @@
             {name: "driverClass", displayName: "驱动"},
             {name: "userName", displayName: "用户名"},
 
+            {name: "connectString", displayName: "连接字符串"},
+            {name: "poolProperties", displayName: "连接池属性"},
+
             {name: "createTime", displayName: "创建日期"},
 
             // {
@@ -149,10 +164,48 @@
             ]
         },
         checkedIds: [],
-        remoteUrl: '/api/v1/data_source/page'
+        remoteUrl: '/api/v1/data_source/page',
+        validations2: {
+          addModel: {
+            userName: {
+              required: required,
+              minLength: minLength(6)
+            },
+            dataSourceType: {
+              required
+            },
+            connectString: {
+              required
+            },
+            poolProperties: null,
+            driverClass: {
+              required
+            }
+          }
+        }
       }
     },
-    watch: {},
+    validations: {
+      addModel: {
+        userName: {
+          required,
+          minLength: minLength(6)
+        },
+        dataSourceType: {
+          required
+        },
+        connectString: {
+          required
+        },
+        poolProperties: null,
+        driverClass: {
+          required
+        }
+      }
+    },
+    watch: {
+
+    },
     computed: {
       queryJson: function () {
         return {
@@ -167,17 +220,39 @@
         return this.$refs.aTable.getCheckedValues();
       },
       doEditDataSource: function () {
+        let that = this;
+
+        let url = "/api/v1/data_source";
+        let data = this.editModel;
+        axios.post(url, data)
+          .then(function (response) {
+            if (response.data.status === 0) {
+              that.$refs.editFormRef.reset();
+              that.editPageVisible = false;
+              that.$refs.aTable.fetchAndRender();
+              Swal('Good job!', '修改成功!', 'success');
+            } else {
+              Swal('Oops...', "修改信息失败！<br>" + response.data.msg, 'error');
+            }
+          })
+          .catch(function (error) {
+            console.log("edit error is ", error);
+            Swal('Oops...', 'Something went wrong!<br>' + error, 'error');
+          });
+
 
       },
       doSaveDataSource: function () {
         let that = this;
+        let validator = this.$v;
+        debugger;
 
         let url = "/api/v1/data_source";
         let data = this.addModel;
         axios.put(url, data)
           .then(function (response) {
             that.$refs.addFormRef.reset();
-            that.$refs.addFormRef.close();
+            that.addPageVisible = false;
             Swal('Good job!', '保存成功!', 'success');
           })
           .catch(function (error) {
@@ -190,21 +265,36 @@
       },
       openEditPage: function () {
         let that = this;
+        let cIds = this.checkedIds;
 
-        let url = "/api/v1/data_source/";
-        let data = this.addModel;
-        axios.put(url, data)
+        if (cIds === undefined || cIds == null || cIds.length === 0) {
+          Swal('Oops...', '须选中一行!', 'warning');
+          return;
+        }
+
+        if (cIds.length > 1) {
+          Swal('Oops...', '只能选中一行!', 'warning');
+          return;
+        }
+
+        let selectedId = cIds[0];
+
+        let url = "/api/v1/data_source/" + selectedId;
+        let data = this.editModel;
+        axios.get(url, data)
           .then(function (response) {
-            that.$refs.addFormRef.reset();
-            that.$refs.addFormRef.close();
-            Swal('Good job!', '保存成功!', 'success');
+            console.log("response is ", response);
+            if (response.data.status === 0) {
+              that.editModel = response.data.data;
+              that.editPageVisible = true;
+            } else {
+              Swal('Oops...', "获取信息失败！<br>" + response.data.msg, 'error');
+            }
           })
           .catch(function (error) {
-            console.log("error is ", error);
-            Swal('Oops...', 'Something went wrong!', 'error');
+            Swal('Oops...', "获取信息失败！<br>" + error, 'error');
           });
 
-        this.editPageVisible = true;
       },
       getQueryUrl: function () {
         let u = this.remoteUrl;

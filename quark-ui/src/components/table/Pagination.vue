@@ -108,7 +108,6 @@
         if (length <= 0) {
           return [];
         }
-        debugger;
         displayLength = displayLength - 2;
         let indexes = [1];
         let start = Math.round(current - displayLength / 2);

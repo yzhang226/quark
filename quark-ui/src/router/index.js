@@ -22,6 +22,8 @@ import OffSidebar from '../components/layout/OffSidebar'
 import Sidebar from '../components/layout/Sidebar'
 import Checkbox from '../components/form/CheckBox'
 
+// let Component = Vue.component();
+
 Vue.component("k-page-header", Header);
 Vue.component("k-page-footer", Footer);
 Vue.component("k-page-off-sidebar", OffSidebar);
@@ -42,7 +44,7 @@ Vue.component("k-paging", Pagination);
 Vue.component("k-content", Content);
 Vue.component("k-content-header", ContentHeader);
 
-Vue.component("k-model", Modal);
+Vue.component("k-modal", Modal);
 
 
 

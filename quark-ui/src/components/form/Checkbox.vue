@@ -43,7 +43,6 @@
     },
     methods: {
       emitChange: function (event) {
-        debugger;
         let isChecked = event.target.checked;
         if (this.checkedValue instanceof Array) {
           let newValue = [...this.checkedValue];

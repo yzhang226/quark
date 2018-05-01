@@ -1,6 +1,20 @@
 // The Vue build version to load with the `import` command
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
+
+import Vuelidate from 'vuelidate'
+console.log("Vuelidate 2 is ", Vuelidate);
+Vue.use(Vuelidate);
+
+// import { required, sameAs, minLength } from 'vuelidate/lib/validators'
+
+import { validationMixin } from 'vuelidate'
+
+let Component = Vue.extend({
+  mixins: [validationMixin],
+  // validations: { ... }
+})
+
 import App from './App'
 import router from './router'
 // import jQuery from 'jquery/dist/jquery.js' // 只包含运行时版 (生产环境)
@@ -12,6 +26,7 @@ window.jQuery = $;
 // console.log("jquery is " + window.jQuery)
 
 Vue.config.productionTip = false;
+
 
 
 // Vue.component()
