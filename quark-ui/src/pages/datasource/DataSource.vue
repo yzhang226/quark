@@ -42,7 +42,8 @@
 
     <k-modal v-model="addPageVisible" modalSize="large" title="新增数据源" confirm-text="保存"
              :confirmCallback="doSaveDataSource" ref="addModal">
-      <k-form id="addForm" ref="addFormRef">
+      <!-- :validations="validations" -->
+      <k-form id="addForm" ref="addFormRef" >
 
         <div class="row">
           <k-select v-model="addModel.dataSourceType" id="dataSourceType1" label="数据源类型"
@@ -55,8 +56,8 @@
           <k-input v-model="addModel.userName" type="text" placeholder="用户名" id="userName1" label="用户名:"
                    labelSm="3"></k-input>
 
-          <span class="form-group__message" v-if="!$v.addModel.userName.required">userName is required</span>
-          <span class="form-group__message" v-if="!$v.addModel.userName.minLength">userName must have at least {{$v.addModel.userName.$params.minLength.min}} letters.</span>
+          <!--<span class="form-group__message" v-if="!$v.addModel.userName.required">userName is required</span>-->
+          <!--<span class="form-group__message" v-if="!$v.addModel.userName.minLength">userName must have at least {{$v.addModel.userName.$params.minLength.min}} letters.</span>-->
 
           <!--<pre>name: {{ $v.addModel }}</pre>-->
 
@@ -105,10 +106,7 @@
 </template>
 
 <script>
-  // import Vue from 'vue'
-  // import Vuelidate from 'vuelidate'
-  // Vue.use(Vuelidate);
-  // import { required, minLength, between } from 'vuelidate/lib/validators'
+  import { required, minLength, between } from 'vuelidate/lib/validators'
 
   export default {
     name: "DataSource",
@@ -165,41 +163,41 @@
         },
         checkedIds: [],
         remoteUrl: '/api/v1/data_source/page',
-        validations2: {
-          addModel: {
-            userName: {
-              required: required,
-              minLength: minLength(6)
-            },
-            dataSourceType: {
-              required
-            },
-            connectString: {
-              required
-            },
-            poolProperties: null,
-            driverClass: {
-              required
-            }
-          }
-        }
+
+
+
       }
     },
     validations: {
       addModel: {
         userName: {
-          required,
-          minLength: minLength(6)
+          required: {
+            $rule: required,
+            message: '请输入用户名!'
+          },
+          minLength: {
+            $rule: minLength(6),
+            message: '用户名最小长度为6!'
+          }
         },
         dataSourceType: {
-          required
+          required: {
+            $rule: required,
+            message: '请输入数据源类型!'
+          }
         },
         connectString: {
-          required
+          required: {
+            $rule: required,
+            message: '请输入连接字符串!'
+          }
         },
         poolProperties: null,
         driverClass: {
-          required
+          required: {
+            $rule: required,
+            message: '请输入驱动类名!'
+          }
         }
       }
     },
@@ -244,8 +242,12 @@
       },
       doSaveDataSource: function () {
         let that = this;
-        let validator = this.$v;
+        let vali = this.$v;
         debugger;
+
+        // if (vali.) {
+        //
+        // }
 
         let url = "/api/v1/data_source";
         let data = this.addModel;

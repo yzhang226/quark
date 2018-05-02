@@ -3,17 +3,25 @@
 import Vue from 'vue'
 
 import Vuelidate from 'vuelidate'
-console.log("Vuelidate 2 is ", Vuelidate);
+// console.log("Vuelidate 2 is ", Vuelidate);
 Vue.use(Vuelidate);
 
-// import { required, sameAs, minLength } from 'vuelidate/lib/validators'
+// import * as validators from 'vuelidate/lib/validators'
+// window.required = validators.required;
+// window.minLength = validators.minLength;
+// window.sameAs =validators.sameAs;
 
-import { validationMixin } from 'vuelidate'
+import {required, minLength, sameAs} from 'vuelidate/lib/validators'
+window.required = required;
+window.minLength = minLength;
+window.sameAs = sameAs;
 
-let Component = Vue.extend({
-  mixins: [validationMixin],
-  // validations: { ... }
-})
+// import { validationMixin } from 'vuelidate'
+
+// let Component = Vue.extend({
+//   mixins: [validationMixin],
+//   // validations: { ... }
+// })
 
 import App from './App'
 import router from './router'

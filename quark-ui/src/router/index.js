@@ -22,8 +22,6 @@ import OffSidebar from '../components/layout/OffSidebar'
 import Sidebar from '../components/layout/Sidebar'
 import Checkbox from '../components/form/CheckBox'
 
-// let Component = Vue.component();
-
 Vue.component("k-page-header", Header);
 Vue.component("k-page-footer", Footer);
 Vue.component("k-page-off-sidebar", OffSidebar);
@@ -36,7 +34,7 @@ Vue.component("k-form", Form);
 Vue.component("k-input", Input);
 Vue.component("k-select", Select);
 Vue.component("k-textarea", Textarea);
-Vue.component('k-checkbox', Checkbox)
+Vue.component('k-checkbox', Checkbox);
 
 Vue.component("k-panel", Panel);
 Vue.component("k-paging", Pagination);

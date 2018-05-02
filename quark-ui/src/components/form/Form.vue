@@ -4,30 +4,31 @@
     <slot></slot>
   </form>
 
-  <!--<div>-->
-    <!--&lt;!&ndash; box-primary  &ndash;&gt;-->
-    <!--<div :class="[(boxClass || 'box box-primary')]">-->
-      <!--<div class="box-header with-border">-->
-        <!--<h3 class="box-title">{{title || ''}}</h3>-->
-      <!--</div>-->
-      <!--&lt;!&ndash; /.box-header &ndash;&gt;-->
-      <!--&lt;!&ndash; form start &ndash;&gt;-->
-      <!---->
-    <!--</div>-->
-  <!--</div>-->
 </template>
 
 <script>
+  // import Vuelidate from 'vuelidate'
   // this.$refs.h1ele.style.color = 'red';// 修改html样式
+  // mixins: [Vuelidate.validationMixin],
   export default {
+
     name: "k-form",
-    props: ['title', 'eleClass', 'id'],
+    props: ['title', 'eleClass', 'id', 'validations'],
+    beforeCreate: function () {
+      // this.validations =
+      debugger;
+      console.log("test ");
+    },
     computed: {
 
     },
+    // validations: this.validations,
     methods: {
       reset: function () {
         this.$refs._innerForm.reset();
+      },
+      validate: function () {
+        //
       }
     }
   }
