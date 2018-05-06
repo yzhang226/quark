@@ -103,10 +103,13 @@
         this._doClose();
       },
       confirm: function () {
+        let res = true;
         if (this.confirmCallback) {
-          this.confirmCallback();
+          res = this.confirmCallback();
         }
-        this._doClose();
+        if (res !== false) {
+          this._doClose();
+        }
       },
       emitChange: function (val) {
         // console.log("emit change val is " + val + (typeof val));

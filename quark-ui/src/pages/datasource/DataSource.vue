@@ -43,18 +43,20 @@
     <k-modal v-model="addPageVisible" modalSize="large" title="新增数据源" confirm-text="保存"
              :confirmCallback="doSaveDataSource" ref="addModal">
       <!-- :validations="validations" -->
-      <k-form id="addForm" ref="addFormRef" >
+      <k-form id="addForm" ref="addFormRef" :validations="validations" :enableValidate="true">
+        <template slot-scope="{ validations }">
+
 
         <div class="row">
           <k-select v-model="addModel.dataSourceType" id="dataSourceType1" label="数据源类型"
-                    :selectData="dataSourceTypes" labelSm="3"></k-select>
+                    :selectData="dataSourceTypes" labelSm="3" :constraints="validations.addModel.dataSourceType"></k-select>
           <k-input v-model="addModel.driverClass" type="text" placeholder="驱动类: com.mysql.jdbc.Driver" id="driverClass1"
-                   label="驱动类:" labelSm="3"></k-input>
+                   label="驱动类:" labelSm="3" :constraints="validations.addModel.driverClass"></k-input>
         </div>
 
         <div class="row">
           <k-input v-model="addModel.userName" type="text" placeholder="用户名" id="userName1" label="用户名:"
-                   labelSm="3"></k-input>
+                   labelSm="3" :constraints="validations.addModel.userName"></k-input>
 
           <!--<span class="form-group__message" v-if="!$v.addModel.userName.required">userName is required</span>-->
           <!--<span class="form-group__message" v-if="!$v.addModel.userName.minLength">userName must have at least {{$v.addModel.userName.$params.minLength.min}} letters.</span>-->
@@ -62,15 +64,18 @@
           <!--<pre>name: {{ $v.addModel }}</pre>-->
 
           <k-input v-model="addModel.password" type="password" placeholder="密码" id="password1" label="密码:"
-                   labelSm="3"></k-input>
+                   labelSm="3" :constraints="validations.addModel.password"></k-input>
         </div>
 
         <div class="row">
-          <k-textarea v-model="addModel.connectString" type="text" placeholder="连接URL, JSON格式" id="connectString1"
-                      label="连接URL:" labelSm="3"></k-textarea>
-          <k-textarea v-model="addModel.poolProperties" type="text" placeholder="连接池配置, JSON格式" id="poolProperties1"
-                      label="连接池配置:" labelSm="3"></k-textarea>
+          <!--{{addModel.dataSourceType}}-->
+          <k-textarea v-model="addModel.connectString" type="text" placeholder="连接URL"
+                      label="连接URL:" labelSm="3" :constraints="validations.addModel.connectString"></k-textarea>
+          <k-textarea v-model="addModel.poolProperties" type="text" placeholder="连接池配置, JSON格式"
+                      label="连接池配置:" labelSm="3" :constraints="validations.addModel.poolProperties"></k-textarea>
         </div>
+
+        </template>
       </k-form>
     </k-modal>
 
@@ -119,23 +124,24 @@
         addPageVisible: false,
         editModel: {
           userName: null,
-          dataSourceType: 10,
+          dataSourceType: null,
           connectString: null,
           poolProperties: null,
           driverClass: null
         },
         addModel: {
           userName: null,
-          dataSourceType: 10,
+          dataSourceType: null,
           connectString: null,
           poolProperties: null,
           driverClass: null
         },
         queryModel: {
           userName: null,
-          dataSourceType: 10
+          dataSourceType: null
         },
         dataSourceTypes: [
+          {value: null, selected: true, text: '请选择'},
           {value: 10, text: 'MySQL'},
           {value: 20, text: 'SQLServer'}
           // , selected: true
@@ -164,43 +170,49 @@
         checkedIds: [],
         remoteUrl: '/api/v1/data_source/page',
 
-
-
-      }
-    },
-    validations: {
-      addModel: {
-        userName: {
-          required: {
-            $rule: required,
-            message: '请输入用户名!'
-          },
-          minLength: {
-            $rule: minLength(6),
-            message: '用户名最小长度为6!'
-          }
-        },
-        dataSourceType: {
-          required: {
-            $rule: required,
-            message: '请输入数据源类型!'
-          }
-        },
-        connectString: {
-          required: {
-            $rule: required,
-            message: '请输入连接字符串!'
-          }
-        },
-        poolProperties: null,
-        driverClass: {
-          required: {
-            $rule: required,
-            message: '请输入驱动类名!'
+        validations: {
+          addModel: {
+            userName: {
+              required: {
+                message: '请输入用户名'
+              },
+              length: {
+                min: 6,
+                max: 20,
+                message: '用户名最小长度为6'
+              }
+            },
+            password: {
+              required: {
+                message: '请输入密码'
+              }
+            },
+            dataSourceType: {
+              required: {
+                message: '请选择数据源类型'
+              }
+            },
+            connectString: {
+              required: {
+                message: '请输入连接字符串'
+              }
+            },
+            poolProperties: {
+              json: {
+                message: '连接池属性必须为JSON格式'
+              }
+            },
+            driverClass: {
+              required: {
+                message: '请输入驱动类名'
+              }
+            }
           }
         }
+
       }
     },
+
     watch: {
 
     },
@@ -242,8 +254,16 @@
       },
       doSaveDataSource: function () {
         let that = this;
-        let vali = this.$v;
+
+        let result = this.$refs.addFormRef.validate();
+        let errorRes = Q.filterOneErrorValidate(result);
+
         debugger;
+        if (Q.isNotEmpty(errorRes) && errorRes.isError()) {
+          console.log('errorRes is ', errorRes);
+          return false;
+        }
+
 
         // if (vali.) {
         //

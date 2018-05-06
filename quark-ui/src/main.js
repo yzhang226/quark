@@ -2,46 +2,28 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
 
-import Vuelidate from 'vuelidate'
-// console.log("Vuelidate 2 is ", Vuelidate);
-Vue.use(Vuelidate);
+// import Vuelidate from 'vuelidate'
+// Vue.use(Vuelidate);
 
-// import * as validators from 'vuelidate/lib/validators'
-// window.required = validators.required;
-// window.minLength = validators.minLength;
-// window.sameAs =validators.sameAs;
+// import {required, minLength, sameAs} from 'vuelidate/lib/validators'
+// window.required = required;
+// window.minLength = minLength;
+// window.sameAs = sameAs;
 
-import {required, minLength, sameAs} from 'vuelidate/lib/validators'
-window.required = required;
-window.minLength = minLength;
-window.sameAs = sameAs;
-
-// import { validationMixin } from 'vuelidate'
-
-// let Component = Vue.extend({
-//   mixins: [validationMixin],
-//   // validations: { ... }
-// })
 
 import App from './App'
 import router from './router'
-// import jQuery from 'jquery/dist/jquery.js' // 只包含运行时版 (生产环境)
-// import jQuery from './assets/jquery.js'
 let $ = require('jquery/dist/jquery.js');
 
 window.$ = $;
 window.jQuery = $;
-// console.log("jquery is " + window.jQuery)
 
 Vue.config.productionTip = false;
 
 
 
-// Vue.component()
 import axios from 'axios';
-// let axios = require('axios');
 window.axios = axios;
-// import axios from 'axios'
 Vue.prototype.$http = axios;
 
 import Swal from 'sweetalert2'
@@ -98,6 +80,11 @@ require('chart.js/Chart.js');
 // require('admin-lte/dist/js/demo.js')
 require('./plugins/adminlte/demo');
 
+import Q from './components/utils/core'
+import validator from './components/validator/va'
+
+window.Q = Q;
+window.validator = validator;
 
 
 require('./mock/mock-data');
